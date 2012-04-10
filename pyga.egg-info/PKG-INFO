@@ -1,0 +1,22 @@
+Metadata-Version: 1.0
+Name: pyga
+Version: 0.1
+Summary: Server side implemenation of Google Analytics in Python.
+Home-page: https://github.com/kra3/py-ga-mob
+Author: Arun K.R.
+Author-email: the1.arun@gmail.com
+License: Simplified BSD
+Description: 
+        
+        
+Keywords: google analytics  mobile server
+Platform: UNKNOWN
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Environment :: Web Environment
+Classifier: Programming Language :: Python
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Internet
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI

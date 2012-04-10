@@ -1,0 +1,11 @@
+LICENSE
+MANIFEST.in
+README
+setup.py
+pyga/__init__.py
+pyga.egg-info/PKG-INFO
+pyga.egg-info/SOURCES.txt
+pyga.egg-info/dependency_links.txt
+pyga.egg-info/namespace_packages.txt
+pyga.egg-info/requires.txt
+pyga.egg-info/top_level.txt
