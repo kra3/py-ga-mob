@@ -1,0 +1,10 @@
+pyga is a server side implementation of Google Analytics in Python.
+
+This project only helps you with Data Collection part of GA.
+
+Insted of popular javascipt implementation of GA, this implementation
+make use of mobiletracking facility - ie., without Java Script - at the
+server side. This implementation is in Python.
+
+To know more about mobiletracking see:
+http://code.google.com/apis/analytics/docs/mobile/mobileWebsites.html
