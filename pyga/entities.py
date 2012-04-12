@@ -19,7 +19,30 @@ class Event(object):
 
 
 class Item(object):
-    pass
+    '''
+    Represents an Item in Transaction
+
+    Properties:
+     -- Order ID, e.g. "a2343898", will be mapped to "utmtid" parameter
+     -- Product Code. This is the sku code for a given product, will be mapped to "utmipc" parameter
+     -- Product Name, will be mapped to "utmipn" parameter
+     -- Variations on an item, will be mapped to "utmiva" parameter
+     -- Unit Price. Value is set to numbers only, will be mapped to "utmipr" parameter
+     -- Unit Quantity, will be mapped to "utmiqt" parameter
+
+    '''
+
+    def __init__(self):
+        self.order_id = ''
+        self.sku = ''
+        self.name = ''
+        self.variation = ''
+        self.price = ''
+        self.quantity = 1
+
+    def validate(self):
+        if not self.sku:
+            raise Exception('sku/product is a required parameter')
 
 
 class Page(object):
@@ -27,10 +50,10 @@ class Page(object):
     Contains all parameters needed for tracking a page
 
     Properties:
-    path -- Page request URI, e.g. "/path/page.html", will be mapped to "utmp" parameter
+    path -- Page request URI, will be mapped to "utmp" parameter
     title -- Page title, will be mapped to "utmdt" parameter
-    charset -- Charset encoding (e.g. "UTF-8"), will be mapped to "utmcs" parameter
-    referrer -- Referer URL, e.g. "http://www.example.com/path/page.html",  will be mapped to "utmr" parameter
+    charset -- Charset encoding, will be mapped to "utmcs" parameter
+    referrer -- Referer URL, will be mapped to "utmr" parameter
     load_time -- Page load time in milliseconds, will be encoded into "utme" parameter.
 
     '''
