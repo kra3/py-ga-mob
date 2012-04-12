@@ -2,6 +2,8 @@
 
 from datetime import datetime
 from operator import itemgetter
+from urlparse import urlparse
+from urllib import unquote_plus
 import utils
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
@@ -9,7 +11,112 @@ __license__ = "Simplified BSD"
 
 
 class Campaign(object):
-    pass
+    '''
+    A representation of Campaign
+
+    Properties:
+    _type -- See TYPE_* constants, will be mapped to "__utmz" parameter.
+    creation_time --  Time of the creation of this campaign, will be mapped to "__utmz" parameter.
+    response_count -- Response Count, will be mapped to "__utmz" parameter.
+        Is also used to determine whether the campaign is new or repeated,
+        which will be mapped to "utmcn" and "utmcr" parameters.
+    _id -- Campaign ID, a.k.a. "utm_id" query parameter for ga.js
+           Will be mapped to "__utmz" parameter.
+    source -- Source, a.k.a. "utm_source" query parameter for ga.js.
+              Will be mapped to "utmcsr" key in "__utmz" parameter.
+    g_click_id -- Google AdWords Click ID, a.k.a. "gclid" query parameter for ga.js.
+                  Will be mapped to "utmgclid" key in "__utmz" parameter.
+    d_click_id -- DoubleClick (?) Click ID. Will be mapped to "utmdclid" key in "__utmz" parameter.
+    name --  Name, a.k.a. "utm_campaign" query parameter for ga.js.
+             Will be mapped to "utmccn" key in "__utmz" parameter.
+    medium -- Medium, a.k.a. "utm_medium" query parameter for ga.js.
+              Will be mapped to "utmcmd" key in "__utmz" parameter.
+    term -- Terms/Keywords, a.k.a. "utm_term" query parameter for ga.js.
+            Will be mapped to "utmctr" key in "__utmz" parameter.
+    content -- Ad Content Description, a.k.a. "utm_content" query parameter for ga.js.
+               Will be mapped to "utmcct" key in "__utmz" parameter.
+
+    '''
+
+    TYPE_DIRECT = 'direct'
+    TYPE_ORGANIC = 'organic'
+    TYPE_REFERRAL = 'referral'
+
+    CAMPAIGN_DELIMITER = '|'
+
+
+    def __init__(self, typ):
+        self._type = None
+        self.creation_time = None
+        self.response_count = 0
+        self._id = None
+        self.source = None
+        self.g_click_id = None
+        self.d_click_id = None
+        self.name = None
+        self.medium = None
+        self.term = None
+        self.content = None
+
+        if typ:
+            if typ not in ('direct', 'organic', 'referral'):
+                raise Exception('Campaign type has to be one of the Campaign::TYPE_* constant values.')
+
+            self._type = typ
+            if typ == Campaign.TYPE_DIRECT:
+                self.name = '(direct)'
+                self.source = '(direct)'
+                self.medium = '(none)'
+            elif typ == Campaign.TYPE_REFERRAL:
+                self.name = '(referral)'
+                self.medium = 'referral'
+            elif typ == Campaign.TYPE_ORGANIC:
+                self.name = '(organic)'
+                self.medium = 'organic'
+            else:
+                self._type = None
+
+        self.creation_time = datetime.new()
+
+    def validate(self):
+        if not self.source:
+            raise Exception('Campaigns need to have at least the "source" attribute defined.')
+
+    def create_from_referrer(self, url):
+        obj = Campaign(Campaign.TYPE_REFERRAL)
+        parse_rslt = urlparse(url)
+        obj.source = parse_rslt.netloc
+        obj.content = parse_rslt.path
+        return obj
+
+    def extract_from_utmz(self, utmz):
+        params = utmz.split(Campaign.CAMPAIGN_DELIMITER)
+        parts = params[0].split('.', 5)
+        if len(parts) != 5:
+            raise Exception('The given "__utmz" cookie value is invalid.')
+
+        self.creation_time = datetime.fromtimestamp(parts[1])
+        self.response_count = parts[3]
+        params.insert(0, parts[4])
+
+        for param in params:
+            key, val = param.split('=')
+
+            param_map = {
+                'utmcid': '_id',
+                'utmcsr': 'source',
+                'utmgclid': 'g_click_id',
+                'utmdclid': 'd_click_id',
+                'utmccn': 'name',
+                'utmcmd': 'medium',
+                'utmctr': 'term',
+                'utmcct': 'content',
+            }
+
+            if param_map.has_key(key):
+                setattr(self, param_map[key], unquote_plus(val))
+
+        return self
 
 
 class CustomVariable(object):
