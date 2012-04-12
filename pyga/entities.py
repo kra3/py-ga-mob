@@ -12,7 +12,59 @@ class Campaign(object):
 
 
 class CustomVariable(object):
-    pass
+    '''
+    Represent a Custom Variable
+
+    Properties:
+    index -- Is the slot, you have 5 slots
+    name -- Name given to custom variable
+    value -- Value for the variable
+    scope -- Scope can be any one of 1, 2 or 3.
+
+    WATCH OUT: It's a known issue that GA will not decode URL-encoded
+    characters in custom variable names and values properly, so spaces
+    will show up as "%20" in the interface etc. (applicable to name & value)
+    http://www.google.com/support/forum/p/Google%20Analytics/thread?tid=2cdb3ec0be32e078
+
+    '''
+
+    SCOPE_VISITOR = 1
+    SCOPE_SESSION = 2
+    SCOPE_PAGE = 3
+
+    def __init__(self, index=None, name=None, value=None, scope=None):
+        self.index = index
+        self.name = name
+        self.value = value
+        self.scope = CustomVariable.SCOPE_PAGE
+        if scope:
+            self.scope = scope
+
+    def __setattr__(self, name, value):
+        if name == 'scope':
+            if value and value not in range(1, 4):
+                raise Exception('Custom Variable scope has to be one of the 1,2 or 3')
+
+        if name == 'index':
+            # Custom Variables are limited to five slots officially, but there seems to be a
+            # trick to allow for more of them which we could investigate at a later time (see
+            # http://analyticsimpact.com/2010/05/24/get-more-than-5-custom-variables-in-google-analytics/
+            if value and (value < 0 or value > 5):
+                raise Exception('Custom Variable index has to be between 1 and 5.')
+
+        object.__setattr__(self, name, value)
+
+    def validate(self):
+        '''
+        According to the GA documentation, there is a limit to the combined size of
+        name and value of 64 bytes after URL encoding,
+        see http://code.google.com/apis/analytics/docs/tracking/gaTrackingCustomVariables.html#varTypes
+        and http://xahlee.org/js/google_analytics_tracker_2010-07-01_expanded.js line 563
+        This limit was increased to 128 bytes BEFORE encoding with the 2012-01 release of ga.js however,
+        see http://code.google.com/apis/analytics/community/gajs_changelog.html
+        '''
+        if len('%s%s' % (self.name, self.value)) > 128:
+            raise Exception('Custom Variable combined name and value length must not be larger than 128 bytes.')
 
 
 class Event(object):
