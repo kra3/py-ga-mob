@@ -123,11 +123,6 @@ class SocialInteraction(object):
     pass
 
 
-class Tracker(object):
-    VERSION = '5.2.5' # As of 25.02.2012
-    pass
-
-
 class Transaction(object):
     '''
     Represents parameters for a Transaction call

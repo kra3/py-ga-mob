@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from entities import Tracker
-
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
 
@@ -276,3 +274,8 @@ class Parameters(object):
                 params[attr] = getattr(self, attr)
 
         return params
+
+
+class Tracker(object):
+    VERSION = '5.2.5' # As of 25.02.2012
+    pass
