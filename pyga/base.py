@@ -278,4 +278,7 @@ class Parameters(object):
 
 class Tracker(object):
     VERSION = '5.2.5' # As of 25.02.2012
+
+
+class Config(object):
     pass
