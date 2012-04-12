@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from utils import get32bitRandom
+from operator import itemgetter
+import utils
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -95,13 +96,13 @@ class Session(object):
 
     '''
     def __init__(self):
-        self.session_id = get32bitRandom()
+        self.session_id = utils.get_32bit_random_num()
         self.track_count = 0
         self.start_time = datetime.now()
 
     @staticmethod
     def generate_session_id():
-        return get32bitRandom()
+        return utils.get_32bit_random_num()
 
     def extract_from_utmb(self, utmb):
         '''
@@ -171,7 +172,125 @@ class Transaction(object):
 
 
 class Visitor(object):
-    pass
+    '''
+    You should serialize this object and store it in the user database to keep it
+    persistent for the same user permanently (similar to the "__umta" cookie of
+    the GA Javascript client).
+
+    Parameters:
+    unique_id -- Unique user ID, will be part of the "__utma" cookie parameter
+    first_visit_time -- Time of the very first visit of this user, will be part of the "__utma" cookie parameter
+    previous_visit_time -- Time of the previous visit of this user, will be part of the "__utma" cookie parameter
+    current_visit_time -- Time of the current visit of this user, will be part of the "__utma" cookie parameter
+    visit_count -- Amount of total visits by this user, will be part of the "__utma" cookie parameter
+    ip_address -- IP Address of the end user, will be mapped to "utmip" parameter and "X-Forwarded-For" request header
+    user_agent -- User agent string of the end user, will be mapped to "User-Agent" request header
+    locale -- Locale string (country part optional) will be mapped to "utmul" parameter
+    flash_version -- Visitor's Flash version, will be maped to "utmfl" parameter
+    java_enabled -- Visitor's Java support, will be mapped to "utmje" parameter
+    screen_colour_depth -- Visitor's screen color depth, will be mapped to "utmsc" parameter
+    screen_resolution -- Visitor's screen resolution, will be mapped to "utmsr" parameter
+    '''
+    def __init__(self):
+        now = datetime.now()
+
+        self.unique_id = None
+        self.first_visit_time = now
+        self.previous_visit_time = now
+        self.current_visit_time = now
+        self.visit_count = 1
+        self.ip_address = None
+        self.user_agent = None
+        self.locale = None
+        self.flash_version = None
+        self.java_enabled = None
+        self.screen_colour_depth = None
+        self.screen_resolution = None
+
+    def __setattr__(self, name, value):
+        if name == 'unique_id':
+            if value and value < 0 or value > 0x7fffffff:
+                raise Exception('Visitor unique ID has to be a 32-bit integer between 0 and 0x7fffffff')
+        object.__setattr__(self, name, value)
+
+    def __getattribute__(self, name):
+        if name == 'unique_id':
+            tmp = object.__getattribute__(self, name)
+            if tmp == None:
+                self.unique_id = self.generate_unique_id()
+        return object.__getattribute__(self, name)
+
+    def extract_from_utma(self, utma):
+        '''
+        Will extract information for the "unique_id", "first_visit_time", "previous_visit_time",
+        "current_visit_time" and "visit_count" properties from the given "__utma" cookie value.
+        '''
+        parts = utma.split('.')
+        if len(parts) != 6:
+            raise Exception('The given "__utma" cookie value is invalid.')
+
+        self.unique_id = parts[1]
+        self.first_visit_time = datetime.fromtimestamp(parts[2])
+        self.previous_visit_time = datetime.fromtimestamp(parts[3])
+        self.current_visit_time = datetime.fromtimestamp(parts[4])
+        self.visit_count = parts[5]
+
+        return self
+
+    def extract_from_server_meta(self, meta):
+        '''
+        Will extract information for the "ip_address", "user_agent" and "locale"
+        properties from the given WSGI REQUEST META variable or equivalent.
+        '''
+        if meta.has_key('REMOTE_ADDR') and meta['REMOTE_ADDR']:
+            ip = None
+            for key in ('X_FORWARDED_FOR', 'REMOTE_ADDR'):
+                if meta.has_key(key) and not ip:
+                    ips = meta.get(key, '').split(',')
+                    ip = ips[len(ips)-1].strip()
+                    if not utils.is_valid_ip(ip):
+                        ip = None
+                    if utils.is_private_ip(ip):
+                        ip = None
+            if ip:
+                self.ip_address = ip
+
+        if meta.has_key('HTTP_USER_AGENT') and meta['HTTP_USER_AGENT']:
+            self.user_agent = meta['HTTP_USER_AGENT']
+
+        if meta.has_key('HTTP_ACCEPT_LANGUAGE') and meta['HTTP_ACCEPT_LANGUAGE']:
+            user_locals = []
+            matched_locales = utils.validate_locale(meta['HTTP_ACCEPT_LANGUAGE'])
+            if matched_locales:
+                lang_lst = map((lambda x: x.replace('-', '_')), (i[1] for i in matched_locales))
+                quality_lst = map((lambda x: x and x or 1), (float(i[4]) for i in matched_locales))
+                lang_quality_map = map((lambda x,y: (x,y)), lang_lst, quality_lst)
+                user_locals = [x[0] for x in sorted(lang_quality_map, key=itemgetter(1), reverse=True)]
+
+            if user_locals:
+                self.locale = user_locals[0]
+
+        return self
+
+    def generate_hash(self):
+        '''Generates a hashed value from user-specific properties.'''
+        tmpstr = "%s%s%s" % (self.user_agent, self.screen_resolution, self.screen_colour_depth)
+        return utils.generate_hash(tmpstr)
+
+    def generate_unique_id(self):
+        '''Generates a unique user ID from the current user-specific properties.'''
+        return ((utils.get_32bit_random_num() ^ self.generate_hash()) & 0x7fffffff)
+
+    def add_session(self, session):
+        '''
+        Updates the "previousVisitTime", "currentVisitTime" and "visitCount"
+        fields based on the given session object.
+        '''
+        start_time = session.start_time
+        if start_time != self.current_visit_time:
+            self.previous_visit_time = self.current_visit_time
+            self.current_visit_time = start_time
+            self.visit_count = self.visit_count + 1
 
 
 class Parameters(object):
