@@ -23,12 +23,12 @@ class Item(object):
     Represents an Item in Transaction
 
     Properties:
-     -- Order ID, e.g. "a2343898", will be mapped to "utmtid" parameter
-     -- Product Code. This is the sku code for a given product, will be mapped to "utmipc" parameter
-     -- Product Name, will be mapped to "utmipn" parameter
-     -- Variations on an item, will be mapped to "utmiva" parameter
-     -- Unit Price. Value is set to numbers only, will be mapped to "utmipr" parameter
-     -- Unit Quantity, will be mapped to "utmiqt" parameter
+    order_id -- Order ID, will be mapped to "utmtid" parameter
+    sku -- Product Code. This is the sku code for a given product, will be mapped to "utmipc" parameter
+    name -- Product Name, will be mapped to "utmipn" parameter
+    variation -- Variations on an item, will be mapped to "utmiva" parameter
+    price -- Unit Price. Value is set to numbers only, will be mapped to "utmipr" parameter
+    quantity -- Unit Quantity, will be mapped to "utmiqt" parameter
 
     '''
 
@@ -127,7 +127,46 @@ class Tracker(object):
 
 
 class Transaction(object):
-    pass
+    '''
+    Represents parameters for a Transaction call
+
+    Properties:
+    order_id -- Order ID, will be mapped to "utmtid" parameter
+    affiliation -- Affiliation, Will be mapped to "utmtst" parameter
+    total -- Total Cost, will be mapped to "utmtto" parameter
+    tax -- Tax Cost, will be mapped to "utmttx" parameter
+    shipping -- Shipping Cost, values as for unit and price, will be mapped to "utmtsp" parameter
+    city -- Billing City, will be mapped to "utmtci" parameter
+    state -- Billing Region, will be mapped to "utmtrg" parameter
+    country -- Billing Country, will be mapped to "utmtco" parameter
+    items -- @entity.Items in a transaction
+
+    '''
+    def __init__(self):
+        self.order_id = ''
+        self.affiliation = ''
+        self.total = ''
+        self.tax = ''
+        self.shipping = ''
+        self.city = ''
+        self.state = ''
+        self.country = ''
+        self.items = []
+
+    def __setattr__(self, name, value):
+        if name == 'order_id':
+            for itm in items:
+                itm.order_id = value
+        object.__setattr__(self, name, value)
+
+    def validate(self):
+        if len(items) == 0:
+            raise Exception('Transaction need to consist of at least one item')
+
+    def add_item(self, item):
+        ''' item of type entities.Item '''
+        item.order_id = self.order_id
+        self.items.append(item)
 
 
 class Visitor(object):
