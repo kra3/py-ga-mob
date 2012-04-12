@@ -7,6 +7,7 @@ import utils
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
 
+
 class Campaign(object):
     pass
 
@@ -32,7 +33,7 @@ class CustomVariable(object):
     SCOPE_SESSION = 2
     SCOPE_PAGE = 3
 
-    def __init__(self, index=None, name=None, value=None, scope=None):
+    def __init__(self, index=None, name=None, value=None, scope=CustomVariable.SCOPE_PAGE):
         self.index = index
         self.name = name
         self.value = value
@@ -68,7 +69,34 @@ class CustomVariable(object):
 
 
 class Event(object):
-    pass
+    '''
+    Represents an Event
+    http://code.google.com/apis/analytics/docs/tracking/eventTrackerOverview.html
+
+    Properties:
+    category -- The general event category
+    action -- The action for the event
+    label -- An optional descriptor for the event
+    value -- An optional value associated with the event. You can see your
+             event values in the Overview, Categories, and Actions reports,
+             where they are listed by event or aggregated across events,
+             depending upon your report view.
+    noninteraction -- By default, event hits will impact a visitor's bounce rate.
+                      By setting this parameter to true, this event hit
+                      will not be used in bounce rate calculations.
+                      (default False)
+    '''
+
+    def __init__(self, category=None, action=None, label=None, value=None, noninteraction=False):
+        self.category = category
+        self.action = action
+        self.label = label
+        self.value = value
+        self.noninteraction = bool(noninteraction)
+
+    def validate(self):
+        if not(self.category and self.action):
+            raise Exception('Events, at least need to have a category and action defined.')
 
 
 class Item(object):
@@ -172,7 +200,25 @@ class Session(object):
 
 
 class SocialInteraction(object):
-    pass
+    '''
+
+    Properties:
+    action -- Required. A string representing the social action being tracked,
+              will be mapped to "utmsa" parameter
+    network -- Required. A string representing the social network being tracked,
+               will be mapped to "utmsn" parameter
+    target -- Optional. A string representing the URL (or resource) which receives the action.
+
+    '''
+
+    def __init__(self, action=None, network=None, target=None):
+        self.action = action
+        self.network = network
+        self.target = target
+
+    def validate(self):
+        if not(self.action and self.network):
+            raise Exception('Social interactions need to have at least the "network" and "action" attributes defined.')
 
 
 class Transaction(object):
