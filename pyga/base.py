@@ -1,7 +1,62 @@
 # -*- coding: utf-8 -*-
 
+import utils
+from entities import CustomVariable
+
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
+
+
+class Config(object):
+    '''
+    Configurations for Google Analytics: Server Side
+
+    Properties:
+    error_severity -- How strict should errors get handled? After all,
+        we do just do some tracking stuff here, and errors shouldn't
+        break an application's functionality in production.
+        RECOMMENDATION: Exceptions during deveopment, warnings in production.
+    send_on_shutdown --  Whether to just queue all requests on HttpRequest.fire()
+        and actually send them on shutdown after all other tasks are done.
+        This has two advantages:
+        1) It effectively doesn't affect app performance
+        2) It can e.g. handle custom variables that were set after scheduling a request
+    fire_and_forget -- Whether to make asynchronous requests to GA without
+        waiting for any response (speeds up doing requests).
+    logging_callback -- Logging callback, registered via setLoggingCallback().
+        Will be fired whenever a request gets sent out and receives the
+        full HTTP request as the first and the full HTTP response
+        (or null if the "fireAndForget" option or simulation mode are used) as the 2nd argument.
+    request_timeout -- Seconds (float allowed) to wait until timeout when
+        connecting to the Google analytics endpoint host.
+    endpoint -- Google Analytics tracking request endpoint. Can be set to null to
+        silently simulate (and log) requests without actually sending them.
+    anonimize_ip_address -- Whether to anonymize IP addresses within Google Analytics
+        by stripping the last IP address block, will be mapped to "aip" parameter.
+    site_speed_sample_rate -- Defines a new sample set size (0-100) for
+        Site Speed data collection. By default, a fixed 1% sampling of your site
+        visitors make up the data pool from which the Site Speed metrics are derived.
+
+    '''
+    ERROR_SEVERITY_SILECE = 0
+    ERROR_SEVERITY_WARNINGS = 1
+    ERROR_SEVERITY_EXCEPTIONS = 2
+
+    def __init__(self):
+        self.error_severity = Config.ERROR_SEVERITY_EXCEPTIONS
+        self.send_on_shutdown = False
+        self.fire_and_forget = False
+        self.logging_callback = False
+        self.request_timeout = 1
+        self.endpoint = 'www.google-analytics.com/__utm.gif'
+        self.anonimize_ip_address = False
+        self.site_speed_sample_rate = 1
+
+    def __setattr__(self, name, value):
+        if name == 'site_speed_sample_rate':
+            if value and (value < 0 or value >100):
+                raise Exception('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
+        object.__setattr__(self, name, value)
 
 
 class Parameters(object):
@@ -277,8 +332,81 @@ class Parameters(object):
 
 
 class Tracker(object):
+    '''
+    Act like a Manager of all files
+
+    Properties:
+    account_id -- Google Analytics account ID, will be mapped to "utmac" parameter
+    domain_name -- Host Name, will be mapped to "utmhn" parameter
+    allow_hash --  Whether to generate a unique domain hash,
+                   default is true to be consistent with the GA Javascript Client
+    custom_variables --
+    campaign --
+    '''
+
+    '''
+    Google Analytics client version on which this library is built upon,
+    will be mapped to "utmwv" parameter.
+
+    This doesn't necessarily mean that all features of the corresponding
+    ga.js version are implemented but rather that the requests comply
+    with these of ga.js.
+
+    http://code.google.com/apis/analytics/docs/gaJS/changelog.html
+    '''
     VERSION = '5.2.5' # As of 25.02.2012
+    config = Config()
 
+    def __init__(self, account_id='', domain_name='', conf=None):
+        self.account_id = account_id
+        self.domain_name = domain_name
+        self.allow_hash = True
+        self.custom_variables = {}
+        self.campaign = None
+        if isinstance(conf, Config):
+            Tracker.config = conf
 
-class Config(object):
-    pass
+    def __setattr__(self, name, value):
+        if name == 'account_id':
+            if value and not utils.is_valid_google_account(value):
+                raise Exception('Given Google Analytics account ID is not valid')
+
+        elif name == 'campaign':
+            if isinstance(value, Campaign):
+                value.validate()
+            else:
+                value = None
+
+        object.__setattr__(self, name, value)
+
+    def add_custom_variable(self, custom_var):
+        '''
+        Equivalent of _setCustomVar() in GA Javascript client
+        http://code.google.com/apis/analytics/docs/tracking/gaTrackingCustomVariables.html
+        '''
+        if not isinstance(custom_var, CustomVariable):
+            return
+
+        custom_var.validate()
+        index = custom_var.index
+        self.custom_variables[index] = custom_var
+
+    def remove_custom_variable(self, index):
+        '''Equivalent of _deleteCustomVar() in GA Javascript client.'''
+        if self.custom_variables.has_key(index):
+            del self.custom_variables[index]
+
+    def track_pageview(self, page, sessiom, visitor):
+        pass
+
+    def track_event(self, event, session, visitor):
+        pass
+
+    def track_transaction(self, transaction, session, visitor):
+        pass
+
+    def track_social(self, social_interaction, page, session, visitor):
+        pass
+
+    def _raiseError(self, message):
+        pass
