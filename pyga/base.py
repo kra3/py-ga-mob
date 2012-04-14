@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from sys import stderr
 import utils
 from entities import CustomVariable
+
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -39,11 +41,11 @@ class Config(object):
 
     '''
     ERROR_SEVERITY_SILECE = 0
-    ERROR_SEVERITY_WARNINGS = 1
-    ERROR_SEVERITY_EXCEPTIONS = 2
+    ERROR_SEVERITY_PRINT = 1
+    ERROR_SEVERITY_RAISE = 2
 
     def __init__(self):
-        self.error_severity = Config.ERROR_SEVERITY_EXCEPTIONS
+        self.error_severity = Config.ERROR_SEVERITY_RAISE
         self.send_on_shutdown = False
         self.fire_and_forget = False
         self.logging_callback = False
@@ -397,16 +399,69 @@ class Tracker(object):
             del self.custom_variables[index]
 
     def track_pageview(self, page, sessiom, visitor):
-        pass
+        '''Equivalent of _trackPageview() in GA Javascript client.'''
+        request = PageViewRequest(self.config)
+        request.page = page
+        request.session = session
+        request.visitor = visitor
+        request.tracker = self
+        request.fire()
 
     def track_event(self, event, session, visitor):
-        pass
+        '''Equivalent of _trackEvent() in GA Javascript client.'''
+        event.validate()
+
+        request = EventRequest(self.config)
+        request.event = event
+        request.session = session
+        request.visitor = visitor
+        request.tracker = self
+        request.fire()
 
     def track_transaction(self, transaction, session, visitor):
-        pass
+        '''Combines _addTrans(), _addItem() (indirectly) and _trackTrans() of GA Javascript client.'''
+        transaction.validate()
+
+        request = TransactionRequest(self.config)
+        request.transaction = transaction
+        request.session = session
+        request.visitor = visitor
+        request.tracker = self
+        request.fire()
+
+        for item in transaction.items:
+            item.validate()
+
+            request = ItemRequest(self.config)
+            request.item = item
+            request.session = session
+            request.visitor = visitor
+            request.tracker = self
+            request.fire()
+
 
     def track_social(self, social_interaction, page, session, visitor):
-        pass
+        '''Equivalent of _trackSocial() in GA Javascript client.'''
+        request = SocialInteractionRequest(self.config)
+        request.social_interaction = social_interaction
+        request.page = page
+        request.session = session
+        request.visitor = visitor
+        request.tracker = self
+        request.fire()
 
-    def _raiseError(self, message):
-        pass
+
+    def _raise_error(self, message):
+        error_severity = self.config.error_severity
+        if error_severity ==  Tracker.ERROR_SEVERITY_SILECE:
+            # TODO: Log
+        if error_severity == Tracker.ERROR_SEVERITY_LOG:
+            # TODO: Log
+            stderr.write(message)
+            stderr.flush()
+        elif error_severity == Tracker.ERROR_SEVERITY_RAISE:
+            # TODO: Log
+            raise Exception(message)
+        else:
+            # TODO: Log
+            pass
