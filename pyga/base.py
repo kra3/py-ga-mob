@@ -3,6 +3,7 @@
 from sys import stderr
 import utils
 from entities import CustomVariable
+from requests import EventRequest, ItemRequest, PageViewRequest, SocialInteractionRequest, TransactionRequest
 
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
