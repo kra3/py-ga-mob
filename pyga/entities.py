@@ -357,7 +357,7 @@ class Transaction(object):
 
     def __setattr__(self, name, value):
         if name == 'order_id':
-            for itm in items:
+            for itm in self.items:
                 itm.order_id = value
         object.__setattr__(self, name, value)
 
@@ -367,8 +367,9 @@ class Transaction(object):
 
     def add_item(self, item):
         ''' item of type entities.Item '''
-        item.order_id = self.order_id
-        self.items.append(item)
+        if isinstance(item, Item):
+            item.order_id = self.order_id
+            self.items.append(item)
 
 
 class Visitor(object):
