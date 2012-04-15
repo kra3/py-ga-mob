@@ -20,7 +20,7 @@ class Campaign(object):
     response_count -- Response Count, will be mapped to "__utmz" parameter.
         Is also used to determine whether the campaign is new or repeated,
         which will be mapped to "utmcn" and "utmcr" parameters.
-    _id -- Campaign ID, a.k.a. "utm_id" query parameter for ga.js
+    id -- Campaign ID, a.k.a. "utm_id" query parameter for ga.js
            Will be mapped to "__utmz" parameter.
     source -- Source, a.k.a. "utm_source" query parameter for ga.js.
               Will be mapped to "utmcsr" key in "__utmz" parameter.
@@ -49,7 +49,7 @@ class Campaign(object):
         self._type = None
         self.creation_time = None
         self.response_count = 0
-        self._id = None
+        self.id = None
         self.source = None
         self.g_click_id = None
         self.d_click_id = None
@@ -103,7 +103,7 @@ class Campaign(object):
             key, val = param.split('=')
 
             param_map = {
-                'utmcid': '_id',
+                'utmcid': 'id',
                 'utmcsr': 'source',
                 'utmgclid': 'g_click_id',
                 'utmdclid': 'd_click_id',
@@ -378,7 +378,7 @@ class Visitor(object):
     persistent for the same user permanently (similar to the "__umta" cookie of
     the GA Javascript client).
 
-    Parameters:
+    Properties:
     unique_id -- Unique user ID, will be part of the "__utma" cookie parameter
     first_visit_time -- Time of the very first visit of this user, will be part of the "__utma" cookie parameter
     previous_visit_time -- Time of the previous visit of this user, will be part of the "__utma" cookie parameter
