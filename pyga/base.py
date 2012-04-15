@@ -19,7 +19,7 @@ class Config(object):
         we do just do some tracking stuff here, and errors shouldn't
         break an application's functionality in production.
         RECOMMENDATION: Exceptions during deveopment, warnings in production.
-    send_on_shutdown --  Whether to just queue all requests on HttpRequest.fire()
+    queue_requests --  Whether to just queue all requests on HttpRequest.fire()
         and actually send them on shutdown after all other tasks are done.
         This has two advantages:
         1) It effectively doesn't affect app performance
@@ -47,7 +47,7 @@ class Config(object):
 
     def __init__(self):
         self.error_severity = Config.ERROR_SEVERITY_RAISE
-        self.send_on_shutdown = False
+        self.queue_requests = False
         self.fire_and_forget = False
         self.logging_callback = False
         self.request_timeout = 1
@@ -343,8 +343,8 @@ class Tracker(object):
     domain_name -- Host Name, will be mapped to "utmhn" parameter
     allow_hash --  Whether to generate a unique domain hash,
                    default is true to be consistent with the GA Javascript Client
-    custom_variables --
-    campaign --
+    custom_variables -- CustomVariable instances
+    campaign -- Campaign instance
     '''
 
     '''
