@@ -57,7 +57,7 @@ class GIFRequest(object):
             url = self.config.endpoint
             post = query_string
 
-        headers = []
+        headers = {}
         headers['Host'] = self.config.endpoint.split('/')[0]
         headers['User-Agent'] = self.user_agent
         headers['X-Forwarded-For'] = self.x_forwarded_for
@@ -67,8 +67,7 @@ class GIFRequest(object):
             headers['Content-Type'] = 'text/plain'
             headers['Content-Length'] = len(query_string)
 
-        headers['Connection'] = 'close'
-        return urllib2.Request(url, post, headers)
+        return urllib2.Request(url, post) #, headers)
 
     def build_parameters(self):
         '''Marker implementation'''
@@ -80,7 +79,12 @@ class GIFRequest(object):
 
         #  Do not actually send the request if endpoint host is set to null
         if self.config.endpoint:
-            response = urllib2.urlopen(request, timeout=self.config.request_timeout)
+            print request
+            print self.config.request_timeout
+            try:
+                response = urllib2.urlopen(request, timeout=self.config.request_timeout)
+            except Exception, e:
+                print e.headers, e.msg, e.url
 
         return response
 
@@ -90,7 +94,7 @@ class GIFRequest(object):
         else enqueues the request into Q object: you should call pyga.shutdowon
         as last statement, to actually send out all queued requests.
         '''
-        if config.queue_requests:
+        if self.config.queue_requests:
             # Queuing results. You should call pyga.shutdown as last statement to send out requests.
             self.__Q.add_wrapped_request((lambda: self.__send()))
         else:
@@ -157,7 +161,7 @@ class Request(GIFRequest):
             params.utmip = utils.anonymize_ip(params.utmip)
 
         params.utmhid = self.session.session_id
-        params.utms = self.self.session.track_count
+        params.utms = self.session.track_count
         params = self.build_visitor_parameters(params)
         params = self.build_custom_variable_parameters(params)
         params = self.build_campaign_parameters(params)
@@ -165,7 +169,8 @@ class Request(GIFRequest):
         return params
 
     def build_visitor_parameters(self, params):
-        params.utml = self.visitor.locale.replace('_', '-').lower()
+        if self.visitor.locale:
+            params.utml = self.visitor.locale.replace('_', '-').lower()
 
         if self.visitor.flash_version:
             params.utmfl = self.visitor.flash_version
@@ -314,7 +319,7 @@ class PageViewRequest(Request):
         self.page = page
 
     def get_type(self):
-        PageViewRequest.TYPE_PAGEVIEW
+        PageViewRequest.TYPE_PAGE
 
     def build_parameters(self):
         params = super(PageViewRequest, self).build_parameters()
@@ -472,7 +477,7 @@ class Config(object):
         # self.fire_and_forget = False      # not supported as of now
         # self.logging_callback = False     # not supported as of now
         self.request_timeout = 1
-        self.endpoint = 'www.google-analytics.com/__utm.gif'
+        self.endpoint = 'http://www.google-analytics.com/__utm.gif'
         self.anonimize_ip_address = False
         self.site_speed_sample_rate = 1
 
@@ -750,7 +755,9 @@ class Parameters(object):
         attribs = vars(self)
         for attr in attribs:
             if attr[0] != '_':
-                params[attr] = getattr(self, attr)
+                val = getattr(self, attr)
+                if val != None:
+                    params[attr] = val
 
         return params
 

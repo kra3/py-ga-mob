@@ -254,7 +254,7 @@ class Page(object):
         self.referrer = None
         self.load_time = None
 
-        if path_val:
+        if path:
             self.path= path
 
     def __setattr__(self, name, value):
@@ -345,6 +345,7 @@ class Transaction(object):
 
     '''
     def __init__(self):
+        self.items = []
         self.order_id = None
         self.affiliation = None
         self.total = None
@@ -353,7 +354,6 @@ class Transaction(object):
         self.city = None
         self.state = None
         self.country = None
-        self.items = []
 
     def __setattr__(self, name, value):
         if name == 'order_id':
@@ -362,7 +362,7 @@ class Transaction(object):
         object.__setattr__(self, name, value)
 
     def validate(self):
-        if len(items) == 0:
+        if len(self.items) == 0:
             raise Exception('Transaction need to consist of at least one item')
 
     def add_item(self, item):
