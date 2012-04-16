@@ -48,8 +48,8 @@ class Config(object):
     def __init__(self):
         self.error_severity = Config.ERROR_SEVERITY_RAISE
         self.queue_requests = False
-        self.fire_and_forget = False
-        self.logging_callback = False
+        # self.fire_and_forget = False      # not supported as of now
+        # self.logging_callback = False     # not supported as of now
         self.request_timeout = 1
         self.endpoint = 'www.google-analytics.com/__utm.gif'
         self.anonimize_ip_address = False
