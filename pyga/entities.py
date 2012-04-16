@@ -140,7 +140,7 @@ class CustomVariable(object):
     SCOPE_SESSION = 2
     SCOPE_PAGE = 3
 
-    def __init__(self, index=None, name=None, value=None, scope=CustomVariable.SCOPE_PAGE):
+    def __init__(self, index=None, name=None, value=None, scope=3):
         self.index = index
         self.name = name
         self.value = value
