@@ -4,7 +4,7 @@
 import os
 from setuptools import setup, find_packages
 
-ver = '1.0'
+ver = '1.2'
 README = os.path.join(os.path.dirname(__file__), 'README')
 long_desc = open(README).read() + '\n\n'
 
