@@ -399,56 +399,71 @@ class Tracker(object):
         if self.custom_variables.has_key(index):
             del self.custom_variables[index]
 
-    def track_pageview(self, page, sessiom, visitor):
+    def track_pageview(self, page, session, visitor):
         '''Equivalent of _trackPageview() in GA Javascript client.'''
-        request = PageViewRequest(self.config)
-        request.page = page
-        request.session = session
-        request.visitor = visitor
-        request.tracker = self
+        params = {
+            'config': self.config,
+            'tracker': self,
+            'visitor': visitor,
+            'session': session,
+            'page': page,
+        }
+        request = PageViewRequest(**params)
         request.fire()
 
     def track_event(self, event, session, visitor):
         '''Equivalent of _trackEvent() in GA Javascript client.'''
         event.validate()
 
-        request = EventRequest(self.config)
-        request.event = event
-        request.session = session
-        request.visitor = visitor
-        request.tracker = self
+        params = {
+            'config': self.config,
+            'tracker': self,
+            'visitor': visitor,
+            'session': session,
+            'event': event,
+        }
+        request = EventRequest(**params)
         request.fire()
 
     def track_transaction(self, transaction, session, visitor):
         '''Combines _addTrans(), _addItem() (indirectly) and _trackTrans() of GA Javascript client.'''
         transaction.validate()
 
-        request = TransactionRequest(self.config)
-        request.transaction = transaction
-        request.session = session
-        request.visitor = visitor
-        request.tracker = self
+        params = {
+            'config': self.config,
+            'tracker': self,
+            'visitor': visitor,
+            'session': session,
+            'transaction': transaction,
+        }
+        request = TransactionRequest(**params)
         request.fire()
 
         for item in transaction.items:
             item.validate()
 
-            request = ItemRequest(self.config)
-            request.item = item
-            request.session = session
-            request.visitor = visitor
-            request.tracker = self
+            params = {
+                'config': self.config,
+                'tracker': self,
+                'visitor': visitor,
+                'session': session,
+                'item': item,
+            }
+            request = ItemRequest(**params)
             request.fire()
 
 
     def track_social(self, social_interaction, page, session, visitor):
         '''Equivalent of _trackSocial() in GA Javascript client.'''
-        request = SocialInteractionRequest(self.config)
-        request.social_interaction = social_interaction
-        request.page = page
-        request.session = session
-        request.visitor = visitor
-        request.tracker = self
+        params = {
+            'config': self.config,
+            'tracker': self,
+            'visitor': visitor,
+            'session': session,
+            'social_interaction': social_interaction,
+            'page': page,
+        }
+        request = SocialInteractionRequest(**params)
         request.fire()
 
 
@@ -466,3 +481,128 @@ class Tracker(object):
         else:
             # TODO: Log
             pass
+
+
+class X10(object):
+    __KEY = 'k'
+    __VALUE = 'v'
+    __DELIM_BEGIN = '('
+    __DELIM_END = ')'
+    __DELIM_SET = '*'
+    __DELIM_NUM_VALUE = '!'
+    __ESCAPE_CHAR_MAP = {
+        "'": "'0",
+        ')': "'1",
+        '*': "'2",
+        '!': "'3",
+    }
+    __MINIMUM = 1
+
+    OBJECT_KEY_NUM = 1
+    TYPE_KEY_NUM = 2
+    LABEL_KEY_NUM = 3
+    VALUE_VALUE_NUM = 1
+
+    def __init__(self):
+        self.project_data = {}
+
+    def has_project(self, project_id):
+        return project_data.has_key(project_id)
+
+    def set_key(self, project_id, num, value):
+        self.__set_internal(project_id, X10.__KEY, num, vaue)
+
+    def get_key(self, project_id, num):
+        return self.__get_internal(project_id, X10.__KEY, num)
+
+    def clear_key(self, project_id):
+        self.__clear_internal(project_id, X10.__KEY)
+
+    def set_value(self, project_id, num, value):
+        self.__set_internal(project_id, X10.__VALUE, num, vaue)
+
+    def get_value(self, project_id, num):
+        return self.__get_internal(project_id, X10.__VALUE, num)
+
+    def clear_value(self, project_id):
+        self.__clear_internal(project_id, X10.__VALUE)
+
+    def __set_internal(self, project_id, _type, num, value):
+        '''Shared internal implementation for setting an X10 data type.'''
+        if not self.project_data.has_key(project_id):
+            self.project_data[project_id] = {}
+
+        if not self.project_data[project_id].has_key(_type):
+            self.project_data[project_id][_type] = {}
+
+        self.project_data[project_id][_type][num] = value
+
+    def __get_internal(self, project_id, _type, num):
+        ''' Shared internal implementation for getting an X10 data type.'''
+        if self.project_data.get(project_id, {}).get(_type, {}).has_key(num):
+            return self.project_data[project_id][_type][num]
+        return None
+
+    def __clear_internal(self, project_id, _type):
+        '''
+        Shared internal implementation for clearing all X10 data
+        of a type from a certain project.
+        '''
+        if self.project_data.has_key(project_id) and self.project_data[project_id].has_key(_type):
+            del self.project_data[project_id][_type]
+
+    def __escape_extensible_value(self, value):
+        '''Escape X10 string values to remove ambiguity for special characters.'''
+        def _translate(char):
+            try:
+                return e[char]
+            except KeyError:
+                return char
+
+        return ''.join(map(_translate, str(value))
+
+    def __render_data_type(self, data):
+        '''Given a data array for a certain type, render its string encoding.'''
+        result = []
+        last_indx = 0
+
+        for indx, entry in sorted(data.items()):
+            if entry:
+                tmpstr = ''
+
+                # Check if we need to append the number. If the last number was
+                # outputted, or if this is the assumed minimum, then we don't.
+                if indx != X10.__MINIMUM and indx-1 != last_indx:
+                    tmpstr = '%s%s%s' % (tmpstr, indx, X10.__DELIM_NUM_VALUE)
+
+                tmpstr = '%s%s' % (tmpstr, self.__escape_extensible_value(entry))
+                result.append(tmpstr)
+
+            last_indx = indx
+
+        return "%s%s%s" % (X10.__DELIM_BEGIN, X10.__DELIM_SET.join(result) ,X10.__DELIM_END)
+
+    def __render_project(self, project):
+        '''Given a project array, render its string encoding.'''
+        result = ''
+        need_type_qualifier =  False
+
+        for val in X10.__KEY, X10.__VALUE:
+            if project.has_key(val):
+                data = project[val]
+                if need_type_qualifier:
+                    result = '%s%s' % (result, val)
+
+                result = '%s%s'  % (result, self.__render_data_type(data))
+                need_type_qualifier = False
+            else:
+                need_type_qualifier = True
+
+        return result
+
+    def render_url_string(self):
+        result = ''
+        for project_id, project in self.project_data:
+            result = '%s%s%s' % (result, project_id, self.__render_project(project))
+
+        return result
