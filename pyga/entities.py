@@ -464,7 +464,7 @@ class Visitor(object):
             matched_locales = utils.validate_locale(meta['HTTP_ACCEPT_LANGUAGE'])
             if matched_locales:
                 lang_lst = map((lambda x: x.replace('-', '_')), (i[1] for i in matched_locales))
-                quality_lst = map((lambda x: x and x or 1), (float(i[4]) for i in matched_locales))
+                quality_lst = map((lambda x: x and x or 1), (float(i[4] and i[4] or '0') for i in matched_locales))
                 lang_quality_map = map((lambda x,y: (x,y)), lang_lst, quality_lst)
                 user_locals = [x[0] for x in sorted(lang_quality_map, key=itemgetter(1), reverse=True)]
 
