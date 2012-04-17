@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from random import randint
 import re
 import urllib
+import os
+import traceback
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -55,3 +58,71 @@ def encode_uri_components(value):
 
 def convert_to_uri_component_encoding(value):
     return value.replace('%21', '!').replace('%2A', '*').replace('%27', "'").replace('%28', '(').replace('%29', ')')
+
+# Taken from expicient.com BJs repo.
+def stringify(s, stype=None, fn=None):
+    ''' Converts elements of a complex data structure to strings
+
+    The data structure can be a multi-tiered one - with tuples and lists etc
+    This method will loop through each and convert everything to string.
+    For example - it can be -
+    [[{'a1': {'a2': {'a3': ('a4', timedelta(0, 563)), 'a5': {'a6': datetime()}}}}]]
+    which will be converted to -
+    [[{'a1': {'a2': {'a3': ('a4', '0:09:23'), 'a5': {'a6': '2009-05-27 16:19:52.401500' }}}}]]
+
+    @param stype: If only one type of data element needs to be converted to
+        string without affecting others, stype can be used.
+        In the earlier example, if it is called with stringify(s, stype=datetime.timedelta)
+        the result would be
+        [[{'a1': {'a2': {'a3': ('a4', '0:09:23'), 'a5': {'a6': datetime() }}}}]]
+
+    Also, even though the name is stringify, any function can be run on it, based on
+    parameter fn. If fn is None, it will be stringified.
+
+    '''
+
+    if type(s) in [list, set, dict, tuple]:
+        if isinstance(s, dict):
+            for k in s:
+                s[k] = stringify(s[k], stype, fn)
+        elif type(s) in [list, set]:
+            for i, k in enumerate(s):
+                s[i] = stringify(k, stype, fn)
+        else: #tuple
+            tmp = []
+            for k in s:
+                tmp.append(stringify(k, stype, fn))
+            s = tuple(tmp)
+    else:
+        if fn:
+            if not stype or (stype == type(s)):
+                return fn(s)
+        else:
+            # To do str(s). But, str() can fail on unicode. So, use .encode instead
+            if not stype or (stype == type(s)):
+                try:
+                    return unicode(s)
+                    #return s.encode('ascii', 'replace')
+                except AttributeError:
+                    return str(s)
+                except UnicodeDecodeError:
+                    #bjslog("==================================>%s" %s.decode('ascii', 'replace'))
+                    return s.decode('ascii', 'replace')
+    return s
+
+def gapy_logger(obj, is_exception=False):
+    stack = traceback.format_stack(limit=3)
+    traceparm = stack[1].split(',')
+    filename = os.path.basename(traceparm[0].split('"')[1])
+
+    logger = logging.getLogger('gapy')
+    try:
+        logger.info('File: %s \nServer: %s\nMethod: %s' % (filename, traceparm[2].split()[1], traceparm[1].split()[1]))
+        txt = stringify(obj)
+        if txt:
+            if is_exception:
+                logger.exception('%s' %txt)
+            else:
+                logger.debug('%s' %txt)
+    except:
+        pass
