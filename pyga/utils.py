@@ -110,7 +110,7 @@ def stringify(s, stype=None, fn=None):
                     return s.decode('ascii', 'replace')
     return s
 
-def gapy_logger(obj, is_exception=False):
+def pyga_logger(obj, is_exception=False):
     stack = traceback.format_stack(limit=3)
     traceparm = stack[1].split(',')
     filename = os.path.basename(traceparm[0].split('"')[1])

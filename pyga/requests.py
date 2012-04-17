@@ -67,6 +67,9 @@ class GIFRequest(object):
             headers['Content-Type'] = 'text/plain'
             headers['Content-Length'] = len(query_string)
 
+        utils.pyga_logger(url)
+        if post:
+            utils.pyga_logger(post)
         return urllib2.Request(url, post) #, headers)
 
     def build_parameters(self):
@@ -137,7 +140,7 @@ class Request(GIFRequest):
 
         #http://code.google.com/intl/de-DE/apis/analytics/docs/tracking/eventTrackerGuide.html#implementationConsiderations
         if self.session.track_count > 500:
-            raise Exception('Google Analytics does not guarantee to process more than 500 requests per session.')
+            pyga_logger('Google Analytics does not guarantee to process more than 500 requests per session.')
 
         if self.tracker.campaign:
             self.tracker.campaign.response_count = self.tracker.campaign.response_count + 1
@@ -191,7 +194,7 @@ class Request(GIFRequest):
 
         if custom_vars:
             if len(custom_vars) > 5:
-                raise Exception('The sum of all custom variables cannot exceed 5 in any given request.')
+                pyga_logger('The sum of all custom variables cannot exceed 5 in any given request.')
 
             x10 = X10()
             x10.clear_key(self.X10_CUSTOMVAR_NAME_PROJECT_ID)
@@ -484,7 +487,7 @@ class Config(object):
     def __setattr__(self, name, value):
         if name == 'site_speed_sample_rate':
             if value and (value < 0 or value >100):
-                raise Exception('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
+                pyga_logger('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
         object.__setattr__(self, name, value)
 
 
@@ -800,7 +803,7 @@ class Tracker(object):
     def __setattr__(self, name, value):
         if name == 'account_id':
             if value and not utils.is_valid_google_account(value):
-                raise Exception('Given Google Analytics account ID is not valid')
+                pyga_logger('Given Google Analytics account ID is not valid')
 
         elif name == 'campaign':
             if isinstance(value, Campaign):
@@ -906,7 +909,7 @@ class Tracker(object):
             stderr.flush()
         elif error_severity == Tracker.ERROR_SEVERITY_RAISE:
             # TODO: Log
-            raise Exception(message)
+            pyga_logger(message)
         else:
             # TODO: Log
             pass
