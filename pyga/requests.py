@@ -25,7 +25,7 @@ class GIFRequest(object):
     Properties:
     type -- Indicates the type of request, will be mapped to "utmt" parameter
     config -- base.Config object
-    x_forwarded_for --
+    x_forwarded_for -- Visitors IP address, usefull if running behind a proxy
     user_agent -- User Agent String
 
     '''
@@ -58,7 +58,7 @@ class GIFRequest(object):
             post = query_string
 
         headers = {}
-        headers['Host'] = self.config.endpoint.split('/')[0]
+        headers['Host'] = self.config.endpoint.split('/')[-2]
         headers['User-Agent'] = self.user_agent
         headers['X-Forwarded-For'] = self.x_forwarded_for
 
@@ -70,7 +70,7 @@ class GIFRequest(object):
         utils.pyga_logger(url)
         if post:
             utils.pyga_logger(post)
-        return urllib2.Request(url, post) #, headers)
+        return urllib2.Request(url, post, headers)
 
     def build_parameters(self):
         '''Marker implementation'''
