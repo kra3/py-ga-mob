@@ -25,7 +25,7 @@ class GIFRequest(object):
     Properties:
     type -- Indicates the type of request, will be mapped to "utmt" parameter
     config -- base.Config object
-    x_forwarded_for -- Visitors IP address, usefull if running behind a proxy
+    x_forwarded_for --
     user_agent -- User Agent String
 
     '''
@@ -58,9 +58,9 @@ class GIFRequest(object):
             post = query_string
 
         headers = {}
-        headers['Host'] = self.config.endpoint.split('/')[-2]
-        headers['User-Agent'] = self.user_agent
-        headers['X-Forwarded-For'] = self.x_forwarded_for
+        headers['Host'] = self.config.endpoint.split('/')[0]
+        headers['USER_AGENT'] = self.user_agent
+        headers['X_FORWARDED_FOR'] = self.x_forwarded_for
 
         if use_post:
             # Don't ask me why "text/plain", but ga.js says so :)
@@ -70,7 +70,7 @@ class GIFRequest(object):
         utils.pyga_logger(url)
         if post:
             utils.pyga_logger(post)
-        return urllib2.Request(url, post, headers)
+        return urllib2.Request(url, post) #, headers)
 
     def build_parameters(self):
         '''Marker implementation'''
@@ -951,7 +951,7 @@ class X10(object):
         self.__clear_internal(project_id, X10.__KEY)
 
     def set_value(self, project_id, num, value):
-        self.__set_internal(project_id, X10.__VALUE, num, vaue)
+        self.__set_internal(project_id, X10.__VALUE, num, value)
 
     def get_value(self, project_id, num):
         return self.__get_internal(project_id, X10.__VALUE, num)
@@ -987,7 +987,7 @@ class X10(object):
         '''Escape X10 string values to remove ambiguity for special characters.'''
         def _translate(char):
             try:
-                return e[char]
+                return self.__ESCAPE_CHAR_MAP[char]
             except KeyError:
                 return char
 
@@ -1034,7 +1034,7 @@ class X10(object):
 
     def render_url_string(self):
         result = ''
-        for project_id, project in self.project_data:
+        for project_id, project in self.project_data.iteritems():
             result = '%s%s%s' % (result, project_id, self.__render_project(project))
 
         return result

@@ -445,7 +445,7 @@ class Visitor(object):
         '''
         if meta.has_key('REMOTE_ADDR') and meta['REMOTE_ADDR']:
             ip = None
-            for key in ('X_FORWARDED_FOR', 'REMOTE_ADDR'):
+            for key in ('HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'):
                 if meta.has_key(key) and not ip:
                     ips = meta.get(key, '').split(',')
                     ip = ips[len(ips)-1].strip()
