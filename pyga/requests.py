@@ -942,7 +942,7 @@ class X10(object):
         return project_data.has_key(project_id)
 
     def set_key(self, project_id, num, value):
-        self.__set_internal(project_id, X10.__KEY, num, vaue)
+        self.__set_internal(project_id, X10.__KEY, num, value)
 
     def get_key(self, project_id, num):
         return self.__get_internal(project_id, X10.__KEY, num)
