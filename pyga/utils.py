@@ -105,7 +105,6 @@ def stringify(s, stype=None, fn=None):
                 except AttributeError:
                     return str(s)
                 except UnicodeDecodeError:
-                    #bjslog("==================================>%s" %s.decode('ascii', 'replace'))
                     return s.decode('ascii', 'replace')
     return s
 
