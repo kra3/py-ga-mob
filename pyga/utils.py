@@ -5,7 +5,6 @@ from random import randint
 import re
 import urllib
 import os
-import traceback
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -46,7 +45,7 @@ def generate_hash(tmpstr):
 
 def anonymize_ip(ip):
     if ip:
-        match = RE_FIRST_THREE_OCTETS_OF_IP.findall()
+        match = RE_FIRST_THREE_OCTETS_OF_IP.findall(ip)
         if match:
             return '%s%s' % (match[0][0], '0')
 
@@ -111,13 +110,8 @@ def stringify(s, stype=None, fn=None):
     return s
 
 def pyga_logger(obj, is_exception=False):
-    stack = traceback.format_stack(limit=3)
-    traceparm = stack[1].split(',')
-    filename = os.path.basename(traceparm[0].split('"')[1])
-
-    logger = logging.getLogger('gapy')
+    logger = logging.getLogger('pyga')
     try:
-        logger.info('File: %s \nServer: %s\nMethod: %s' % (filename, traceparm[2].split()[1], traceparm[1].split()[1]))
         txt = stringify(obj)
         if txt:
             if is_exception:
