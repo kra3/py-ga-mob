@@ -128,9 +128,6 @@ class Request(GIFRequest):
         self.visitor = visitor
         self.session = session
 
-    def get_type(self):
-        return ''
-
     def build_http_request(self):
         self.x_forwarded_for = self.visitor.ip_address
         self.user_agent = self.visitor.user_agent
@@ -287,7 +284,7 @@ class ItemRequest(Request):
         self.item = item
 
     def get_type(self):
-        ItemRequest.TYPE_ITEM
+        return ItemRequest.TYPE_ITEM
 
     def build_parameters(self):
         params = super(ItemRequest, self).build_parameters()
@@ -322,7 +319,7 @@ class PageViewRequest(Request):
         self.page = page
 
     def get_type(self):
-        PageViewRequest.TYPE_PAGE
+        return PageViewRequest.TYPE_PAGE
 
     def build_parameters(self):
         params = super(PageViewRequest, self).build_parameters()
@@ -358,7 +355,7 @@ class EventRequest(Request):
         self.event = event
 
     def get_type(self):
-        EventRequest.TYPE_EVENT
+        return EventRequest.TYPE_EVENT
 
     def build_parameters(self):
         params = super(EventRequest, self).build_parameters()
@@ -389,7 +386,7 @@ class SocialInteractionRequest(Request):
         self.page = page
 
     def get_type(self):
-        SocialInteractionRequest.TYPE_SOCIAL
+        return SocialInteractionRequest.TYPE_SOCIAL
 
     def build_parameters(self):
         params = super(SocialInteractionRequest, self).build_parameters()
@@ -410,7 +407,7 @@ class TransactionRequest(Request):
         self.transaction =  transaction
 
     def get_type(self):
-        TransactionRequest.TYPE_TRANSACTION
+        return TransactionRequest.TYPE_TRANSACTION
 
     def build_parameters(self):
         params = super(TransactionRequest, self).build_parameters()
@@ -587,30 +584,30 @@ class Parameters(object):
     def __init__(self):
         # General Parameters
         self.utmwv = Tracker.VERSION
-        self.utmac = None
-        self.utmhn = None
-        self.utmt = None
-        self.utms = None
-        self.utmn = None
-        self.utmcc = None
-        self.utme = None
-        self.utmni = None
-        self.aip = None
-        self.utmu = None
+        self.utmac = ''
+        self.utmhn = ''
+        self.utmt = ''
+        self.utms = ''
+        self.utmn = ''
+        self.utmcc = ''
+        self.utme = ''
+        self.utmni = ''
+        self.aip = ''
+        self.utmu = ''
 
         # Page Parameters
-        self.utmp = None
-        self.utmdt = None
+        self.utmp = ''
+        self.utmdt = ''
         self.utmcs = '-'
         self.utmr = '-'
 
         # Visitor Parameters
-        self.utmip = None
-        self.utmul = None
+        self.utmip = ''
+        self.utmul = ''
         self.utmfl = '-'
         self.utmje = '-'
-        self.utmsc = None
-        self.utmsr = None
+        self.utmsc = ''
+        self.utmsr = ''
         '''
         Visitor tracking cookie __utma
 
@@ -627,10 +624,10 @@ class Parameters(object):
         Expiration: 2 years from set/update.
         Format: __utma=<domainHash>.<uniqueId>.<firstTime>.<lastTime>.<currentTime>.<sessionCount>
         '''
-        self._utma = None
+        self._utma = ''
 
         # Session Parameters
-        self.utmhid = None
+        self.utmhid = ''
         '''
         Session timeout cookie parameter __utmb
 
@@ -651,7 +648,7 @@ class Parameters(object):
         Format: __utmb=<domainHash>.<trackCount>.<token>.<lastTime>
 
         '''
-        self._utmb = None
+        self._utmb = ''
         '''
         Session tracking cookie parameter __utmc
 
@@ -671,33 +668,33 @@ class Parameters(object):
         Format: __utmc=<domainHash>
 
         '''
-        self._utmc = None
-        self.utmipc = None
-        self.utmipn = None
-        self.utmipr = None
-        self.utmiqt = None
-        self.utmiva = None
-        self.utmtid = None
-        self.utmtst = None
-        self.utmtto = None
-        self.utmttx = None
-        self.utmtsp = None
-        self.utmtci = None
-        self.utmtrg = None
-        self.utmtco = None
+        self._utmc = ''
+        self.utmipc = ''
+        self.utmipn = ''
+        self.utmipr = ''
+        self.utmiqt = ''
+        self.utmiva = ''
+        self.utmtid = ''
+        self.utmtst = ''
+        self.utmtto = ''
+        self.utmttx = ''
+        self.utmtsp = ''
+        self.utmtci = ''
+        self.utmtrg = ''
+        self.utmtco = ''
 
         # Campaign Parameters
-        self.utmcn = None
-        self.utmcr = None
-        self.utmcid = None
-        self.utmcsr = None
-        self.utmgclid = None
-        self.utmdclid = None
-        self.utmccn = None
-        self.utmcmd = None
-        self.utmctr = None
-        self.utmcct = None
-        self.utmcvr = None
+        self.utmcn = ''
+        self.utmcr = ''
+        self.utmcid = ''
+        self.utmcsr = ''
+        self.utmgclid = ''
+        self.utmdclid = ''
+        self.utmccn = ''
+        self.utmcmd = ''
+        self.utmctr = ''
+        self.utmcct = ''
+        self.utmcvr = ''
         '''
         Campaign tracking cookie parameter.
 
@@ -712,12 +709,12 @@ class Parameters(object):
         Format: __utmz=<domainHash>.<campaignCreation>.<campaignSessions>.<responseCount>.<campaignTracking>
 
         '''
-        self._utmz = None
+        self._utmz = ''
 
         # Social Tracking Parameters
-        self.utmsn = None
-        self.utmsa = None
-        self.utmsid = None
+        self.utmsn = ''
+        self.utmsa = ''
+        self.utmsid = ''
 
         # Google Website Optimizer (GWO) parameters
         '''
@@ -729,7 +726,7 @@ class Parameters(object):
 
         Expiration: 2 years from set/update.
         '''
-        self._utmx = None
+        self._utmx = ''
 
         # Custom Variables parameters (deprecated)
         '''
@@ -747,7 +744,7 @@ class Parameters(object):
         Format: __utmv=<domainHash>.<value>
 
         '''
-        self._utmv = None
+        self._utmv = ''
 
     def get_parameters(self):
         '''
@@ -759,7 +756,7 @@ class Parameters(object):
         for attr in attribs:
             if attr[0] != '_':
                 val = getattr(self, attr)
-                if val != None:
+                if val:
                     params[attr] = val
 
         return params
