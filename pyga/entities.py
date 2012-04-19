@@ -60,7 +60,7 @@ class Campaign(object):
 
         if typ:
             if typ not in ('direct', 'organic', 'referral'):
-                pyga_logger('Campaign type has to be one of the Campaign::TYPE_* constant values.')
+                utils.pyga_logger('Campaign type has to be one of the Campaign::TYPE_* constant values.')
 
             self._type = typ
             if typ == Campaign.TYPE_DIRECT:
@@ -80,7 +80,7 @@ class Campaign(object):
 
     def validate(self):
         if not self.source:
-            pyga_logger('Campaigns need to have at least the "source" attribute defined.')
+            utils.pyga_logger('Campaigns need to have at least the "source" attribute defined.')
 
     def create_from_referrer(self, url):
         obj = Campaign(Campaign.TYPE_REFERRAL)
@@ -93,7 +93,7 @@ class Campaign(object):
         params = utmz.split(Campaign.CAMPAIGN_DELIMITER)
         parts = params[0].split('.', 5)
         if len(parts) != 5:
-            pyga_logger('The given "__utmz" cookie value is invalid.')
+            utils.pyga_logger('The given "__utmz" cookie value is invalid.')
 
         self.creation_time = datetime.fromtimestamp(parts[1])
         self.response_count = parts[3]
@@ -151,14 +151,14 @@ class CustomVariable(object):
     def __setattr__(self, name, value):
         if name == 'scope':
             if value and value not in range(1, 4):
-                pyga_logger('Custom Variable scope has to be one of the 1,2 or 3')
+                utils.pyga_logger('Custom Variable scope has to be one of the 1,2 or 3')
 
         if name == 'index':
             # Custom Variables are limited to five slots officially, but there seems to be a
             # trick to allow for more of them which we could investigate at a later time (see
             # http://analyticsimpact.com/2010/05/24/get-more-than-5-custom-variables-in-google-analytics/
             if value and (value < 0 or value > 5):
-                pyga_logger('Custom Variable index has to be between 1 and 5.')
+                utils.pyga_logger('Custom Variable index has to be between 1 and 5.')
 
         object.__setattr__(self, name, value)
 
@@ -172,7 +172,7 @@ class CustomVariable(object):
         see http://code.google.com/apis/analytics/community/gajs_changelog.html
         '''
         if len('%s%s' % (self.name, self.value)) > 128:
-            pyga_logger('Custom Variable combined name and value length must not be larger than 128 bytes.')
+            utils.pyga_logger('Custom Variable combined name and value length must not be larger than 128 bytes.')
 
 
 class Event(object):
@@ -203,7 +203,7 @@ class Event(object):
 
     def validate(self):
         if not(self.category and self.action):
-            pyga_logger('Events, at least need to have a category and action defined.')
+            utils.pyga_logger('Events, at least need to have a category and action defined.')
 
 
 class Item(object):
@@ -230,7 +230,7 @@ class Item(object):
 
     def validate(self):
         if not self.sku:
-            pyga_logger('sku/product is a required parameter')
+            utils.pyga_logger('sku/product is a required parameter')
 
 
 class Page(object):
@@ -261,10 +261,10 @@ class Page(object):
         if name == 'path':
             if value and value != '':
                 if value[0] != '/':
-                    pyga_logger('The page path should always start with a slash ("/").')
+                    utils.pyga_logger('The page path should always start with a slash ("/").')
         elif name == 'load_time':
             if value and not isinstance(value, int):
-                pyga_logger('Page load time must be specified in integer milliseconds.')
+                utils.pyga_logger('Page load time must be specified in integer milliseconds.')
 
         object.__setattr__(self, name, value)
 
@@ -298,7 +298,7 @@ class Session(object):
         '''
         parts = utmb.split('.')
         if len(parts) != 4:
-            pyga_logger('The given "__utmb" cookie value is invalid.')
+            utils.pyga_logger('The given "__utmb" cookie value is invalid.')
 
         self.track_count = parts[1]
         self.start_time = datetime.fromtimestamp(parts[3])
@@ -325,7 +325,7 @@ class SocialInteraction(object):
 
     def validate(self):
         if not(self.action and self.network):
-            pyga_logger('Social interactions need to have at least the "network" and "action" attributes defined.')
+            utils.pyga_logger('Social interactions need to have at least the "network" and "action" attributes defined.')
 
 
 class Transaction(object):
@@ -363,7 +363,7 @@ class Transaction(object):
 
     def validate(self):
         if len(self.items) == 0:
-            pyga_logger('Transaction need to consist of at least one item')
+            utils.pyga_logger('Transaction need to consist of at least one item')
 
     def add_item(self, item):
         ''' item of type entities.Item '''
@@ -411,7 +411,7 @@ class Visitor(object):
     def __setattr__(self, name, value):
         if name == 'unique_id':
             if value and value < 0 or value > 0x7fffffff:
-                pyga_logger('Visitor unique ID has to be a 32-bit integer between 0 and 0x7fffffff')
+                utils.pyga_logger('Visitor unique ID has to be a 32-bit integer between 0 and 0x7fffffff')
         object.__setattr__(self, name, value)
 
     def __getattribute__(self, name):
@@ -428,7 +428,7 @@ class Visitor(object):
         '''
         parts = utma.split('.')
         if len(parts) != 6:
-            pyga_logger('The given "__utma" cookie value is invalid.')
+            utils.pyga_logger('The given "__utma" cookie value is invalid.')
 
         self.unique_id = parts[1]
         self.first_visit_time = datetime.fromtimestamp(parts[2])
