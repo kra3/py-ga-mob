@@ -3,10 +3,10 @@
 from sys import stderr
 import calendar
 from math import floor
-from entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
+from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
+import pyga.utils as utils
 import urllib
 import urllib2
-import utils
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"

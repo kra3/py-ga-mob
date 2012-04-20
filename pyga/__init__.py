@@ -1,6 +1,6 @@
 __import__('pkg_resources').declare_namespace(__name__)
 
-from requests import Q
+from pyga.requests import Q
 
 def shutdown():
     '''

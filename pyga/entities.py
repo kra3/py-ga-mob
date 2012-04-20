@@ -4,7 +4,7 @@ from datetime import datetime
 from operator import itemgetter
 from urlparse import urlparse
 from urllib import unquote_plus
-import utils
+import pyga.utils as utils
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
