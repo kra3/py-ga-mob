@@ -70,7 +70,7 @@ class GIFRequest(object):
         utils.pyga_logger(url)
         if post:
             utils.pyga_logger(post)
-        return urllib2.Request(url, post) #, headers)
+        return urllib2.Request(url, post, headers)
 
     def build_parameters(self):
         '''Marker implementation'''

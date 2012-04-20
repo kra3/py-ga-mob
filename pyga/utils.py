@@ -45,7 +45,7 @@ def generate_hash(tmpstr):
 
 def anonymize_ip(ip):
     if ip:
-        match = RE_FIRST_THREE_OCTETS_OF_IP.findall(ip)
+        match = RE_FIRST_THREE_OCTETS_OF_IP.findall(str(ip))
         if match:
             return '%s%s' % (match[0][0], '0')
 
