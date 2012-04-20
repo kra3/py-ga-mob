@@ -1,0 +1,62 @@
+Help on module utils:
+
+NAME
+    utils - # -*- coding: utf-8 -*-
+
+FILE
+    /home/kra3/workspace/Personal/py-ga-mob/pyga/utils.py
+
+FUNCTIONS
+    anonymize_ip(ip)
+    
+    convert_to_uri_component_encoding(value)
+    
+    encode_uri_components(value)
+        Mimics Javascript's encodeURIComponent() function for consistency with the GA Javascript client.
+    
+    generate_hash(tmpstr)
+    
+    get_32bit_random_num()
+    
+    is_private_ip(ip)
+    
+    is_valid_google_account(account)
+    
+    is_valid_ip(ip)
+    
+    pyga_logger(obj, is_exception=False)
+    
+    stringify(s, stype=None, fn=None)
+        Converts elements of a complex data structure to strings
+        
+        The data structure can be a multi-tiered one - with tuples and lists etc
+        This method will loop through each and convert everything to string.
+        For example - it can be -
+        [[{'a1': {'a2': {'a3': ('a4', timedelta(0, 563)), 'a5': {'a6': datetime()}}}}]]
+        which will be converted to -
+        [[{'a1': {'a2': {'a3': ('a4', '0:09:23'), 'a5': {'a6': '2009-05-27 16:19:52.401500' }}}}]]
+        
+        @param stype: If only one type of data element needs to be converted to
+            string without affecting others, stype can be used.
+            In the earlier example, if it is called with stringify(s, stype=datetime.timedelta)
+            the result would be
+            [[{'a1': {'a2': {'a3': ('a4', '0:09:23'), 'a5': {'a6': datetime() }}}}]]
+        
+        Also, even though the name is stringify, any function can be run on it, based on
+        parameter fn. If fn is None, it will be stringified.
+    
+    validate_locale(locale)
+
+DATA
+    RE_FIRST_THREE_OCTETS_OF_IP = <_sre.SRE_Pattern object>
+    RE_GA_ACCOUNT_ID = <_sre.SRE_Pattern object>
+    RE_IP = <_sre.SRE_Pattern object>
+    RE_LOCALE = <_sre.SRE_Pattern object>
+    RE_PRIV_IP = <_sre.SRE_Pattern object>
+    __author__ = 'Arun KR (kra3) <the1.arun@gmail.com>'
+    __license__ = 'Simplified BSD'
+
+AUTHOR
+    Arun KR (kra3) <the1.arun@gmail.com>
+
+
