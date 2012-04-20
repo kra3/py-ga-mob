@@ -1,13 +1,25 @@
-pyga is a server side implementation of Google Analytics in Python.
+===================================================
+PYGA: Python Google Analytics - Data Collection API
+===================================================
 
-This project only helps you with Data Collection part of GA.
+pyga is an iplementation of Google Analytics in Python;so that it can be used at server side.
+This project only helps you with Data Collection part of Google Analytics.
+ie., You can consider this as a replacement for ga.js at client side.
 
-Insted of popular javascipt implementation of GA, this implementation
-make use of mobiletracking facility - ie., without Java Script - at the
-server side. This implementation is in Python.
+Google Provides Android SDK,iOS SDK + Flash SDK. 
+And left everybody else with a single page documentation about GIF request parameters. 
+Also with a basic sample of server side implementation in quite a few languages (perl, php, jsp).
+
+
+Use Cases
+=========
+
+1. You want to track data from server side
+2. You're developing a mobile site and have to support devices w/o JS support
 
 
 What all is supported?
+======================
 
 * Page View
 * E-Commerce
@@ -18,12 +30,13 @@ What all is supported?
 * Campaigns
 * Ad-Words
 
+
+
 To know more about mobiletracking see:
-http://code.google.com/apis/analytics/docs/mobile/mobileWebsites.html
+https://developers.google.com/analytics/devguides/collection/other/mobileWebsites
 
-Thanks:
-Expicient Inc <www.expicient.com>
 
-Referenced:
-php-ga
-flash-ga-sdk
+Thanks to:
+---------
+* `Expicient Inc <http://www.expicient.com>`
+* `php-ga <http://code.google.com/p/php-ga>`
