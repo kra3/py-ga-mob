@@ -58,7 +58,7 @@ class GIFRequest(object):
             post = query_string
 
         headers = {}
-        headers['Host'] = self.config.endpoint.split('/')[0]
+        headers['Host'] = self.config.endpoint.split('/')[2]
         headers['USER_AGENT'] = self.user_agent
         headers['X_FORWARDED_FOR'] = self.x_forwarded_for
 
@@ -82,12 +82,11 @@ class GIFRequest(object):
 
         #  Do not actually send the request if endpoint host is set to null
         if self.config.endpoint:
-            print request
-            print self.config.request_timeout
             try:
                 response = urllib2.urlopen(request, timeout=self.config.request_timeout)
             except Exception, e:
-                print e.headers, e.msg, e.url
+                utils.pyga_logger(e)
+                utils.pyga_logger("error with request")
 
         return response
 

@@ -200,6 +200,7 @@ class Event(object):
         self.label = label
         self.value = value
         self.noninteraction = bool(noninteraction)
+
         if self.noninteraction and not self.value:
             self.value = 0
 
