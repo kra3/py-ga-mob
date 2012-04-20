@@ -12,14 +12,14 @@ Also with a basic sample of server side implementation in quite a few languages 
 
 
 Use Cases
-=========
+--------------
 
 1. You want to track data from server side
 2. You're developing a mobile site and have to support devices w/o JS support
 
 
-What all is supported?
-======================
+Supported Features    
+----------------------
 
 * Page View
 * E-Commerce
@@ -37,6 +37,6 @@ https://developers.google.com/analytics/devguides/collection/other/mobileWebsite
 
 
 Thanks to:
----------
-* `Expicient Inc <http://www.expicient.com>`
-* `php-ga <http://code.google.com/p/php-ga>`
+---------------------
+* `Expicient Inc <http://www.expicient.com>`_
+* `php-ga <http://code.google.com/p/php-ga>`_
