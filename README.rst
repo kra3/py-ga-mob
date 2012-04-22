@@ -26,14 +26,32 @@ Supported Features
 * Social Interaction
 * Custom Variables
 * Events
-* Search Engine
 * Campaigns
+
+  not yet
+
 * Ad-Words
+* Search Engine
 
 
 
 To know more about mobiletracking see:
 https://developers.google.com/analytics/devguides/collection/other/mobileWebsites
+
+
+Example
+-------------------      
+::
+
+     from pyga.requests import Tracker, Page, Session, Visitor
+
+     tracker = Tracker('MO-XXXXX-X', 'yourdomain.com')     
+     visitor = Visitor()
+     visitor.ip_address = '194.54.176.12'
+     session = Session()
+     page = Page('/path')
+     tracker.track_pageview(page, session, visitor)
+     
 
 
 Thanks to:
