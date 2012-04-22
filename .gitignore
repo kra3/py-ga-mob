@@ -1,3 +1,5 @@
 *pyc
 dist/*
+build/*
 pyga.egg-info/*
+doc/_build/*
