@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Py-ga-mob by kra3</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Py-ga-mob</h1>
+        <h2>PYGA: Python Google Analytics - Data Collection API</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/kra3/py-ga-mob/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/kra3/py-ga-mob/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/kra3/py-ga-mob" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>PYGA: Python Google Analytics - Data Collection API</h1>
+
+<p>pyga is an iplementation of Google Analytics in Python;so that it can be used at server side.
+This project only helps you with Data Collection part of Google Analytics.
+ie., You can consider this as a replacement for ga.js at client side.</p>
+
+<p>Google Provides Android SDK,iOS SDK + Flash SDK. 
+And left everybody else with a single page documentation about GIF request parameters. 
+Also with a basic sample of server side implementation in quite a few languages (perl, php, jsp).</p>
+
+<ul>
+<li>PyPi Package Page: <a href="http://pypi.python.org/pypi/pyga">http://pypi.python.org/pypi/pyga</a>
+</li>
+<li>Main Repository: <a href="https://github.com/kra3/py-ga-mob">https://github.com/kra3/py-ga-mob</a>
+</li>
+<li>Copy Repository: <a href="https://bitbucket.org/kra3/pyga/overview">https://bitbucket.org/kra3/pyga/overview</a>
+</li>
+<li>Documentation: <a href="http://readthedocs.org/docs/pyga-python-google-analytics-data-collection-api/en/latest/#">http://readthedocs.org/docs/pyga-python-google-analytics-data-collection-api/en/latest/#</a>
+</li>
+</ul><h2>Use Cases</h2>
+
+<ol>
+<li>You want to track data from server side</li>
+<li>You're developing a mobile site and have to support devices w/o JS support</li>
+</ol><h2>Supported Features</h2>
+
+<ul>
+<li>Page View</li>
+<li>E-Commerce</li>
+<li>Social Interaction</li>
+<li>Custom Variables</li>
+<li>Events</li>
+<li>Campaigns</li>
+</ul><p>not yet implemented</p>
+
+<ul>
+<li>Ad-Words</li>
+<li>Search Engine</li>
+</ul><p>To know more about mobiletracking see:
+<a href="https://developers.google.com/analytics/devguides/collection/other/mobileWebsites">https://developers.google.com/analytics/devguides/collection/other/mobileWebsites</a></p>
+
+<h2>Example</h2>
+
+<div class="highlight">
+<pre>     <span class="kn">from</span> <span class="nn">pyga.requests</span> <span class="kn">import</span> <span class="n">Tracker</span><span class="p">,</span> <span class="n">Page</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">Visitor</span>
+
+     <span class="n">tracker</span> <span class="o">=</span> <span class="n">Tracker</span><span class="p">(</span><span class="s">'MO-XXXXX-X'</span><span class="p">,</span> <span class="s">'yourdomain.com'</span><span class="p">)</span>     
+     <span class="n">visitor</span> <span class="o">=</span> <span class="n">Visitor</span><span class="p">()</span>
+     <span class="n">visitor</span><span class="o">.</span><span class="n">ip_address</span> <span class="o">=</span> <span class="s">'194.54.176.12'</span>
+     <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+     <span class="n">page</span> <span class="o">=</span> <span class="n">Page</span><span class="p">(</span><span class="s">'/path'</span><span class="p">)</span>
+     <span class="n">tracker</span><span class="o">.</span><span class="n">track_pageview</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">visitor</span><span class="p">)</span>
+</pre>
+</div>
+
+
+<h1>Thanks to:</h1>
+
+<ul>
+<li><a href="http://www.expicient.com">Expicient Inc</a></li>
+<li><a href="http://code.google.com/p/php-ga">php-ga</a></li>
+</ul>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
