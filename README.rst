@@ -11,9 +11,9 @@ And left everybody else with a single page documentation about GIF request param
 Also with a basic sample of server side implementation in quite a few languages (perl, php, jsp).
 
 PyPi Package Page: http://pypi.python.org/pypi/pyga
-  Main Repository: https://github.com/kra3/py-ga-mob
-  Copy Repository: https://bitbucket.org/kra3/pyga/overview
-    Documentation: http://readthedocs.org/docs/pyga-python-google-analytics-data-collection-api/en/latest/#
+Main Repository: https://github.com/kra3/py-ga-mob
+Copy Repository: https://bitbucket.org/kra3/pyga/overview
+Documentation: http://readthedocs.org/docs/pyga-python-google-analytics-data-collection-api/en/latest/#
 
 Use Cases
 --------------
