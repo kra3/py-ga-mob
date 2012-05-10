@@ -169,7 +169,7 @@ class Request(GIFRequest):
 
     def build_visitor_parameters(self, params):
         if self.visitor.locale:
-            params.utml = self.visitor.locale.replace('_', '-').lower()
+            params.utmul = self.visitor.locale.replace('_', '-').lower()
 
         if self.visitor.flash_version:
             params.utmfl = self.visitor.flash_version
