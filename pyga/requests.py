@@ -215,7 +215,7 @@ class Request(GIFRequest):
         if campaign:
             params._utmz = '%s.%s.%s.%s.' % (
                     self._generate_domain_hash(),
-                    calendar.timegm(campaign.creation_time.utctimetuple()),
+                    calendar.timegm(campaign.creation_time.timetuple()),
                     self.visitor.visit_count,
                     campaign.response_count,
                 )
@@ -248,15 +248,15 @@ class Request(GIFRequest):
         params._utma = "%s.%s.%s.%s.%s.%s" % (
                 domain_hash,
                 self.visitor.unique_id,
-                calendar.timegm(self.visitor.first_visit_time.utctimetuple()),
-                calendar.timegm(self.visitor.previous_visit_time.utctimetuple()),
-                calendar.timegm(self.visitor.current_visit_time.utctimetuple()),
+                calendar.timegm(self.visitor.first_visit_time.timetuple()),
+                calendar.timegm(self.visitor.previous_visit_time.timetuple()),
+                calendar.timegm(self.visitor.current_visit_time.timetuple()),
                 self.visitor.visit_count
             )
         params._utmb = '%s.%s.10.%s' % (
                 domain_hash,
                 self.session.track_count,
-                calendar.timegm(self.session.start_time.utctimetuple()),
+                calendar.timegm(self.session.start_time.timetuple()),
             )
         params._utmc = domain_hash
         cookies = []

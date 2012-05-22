@@ -76,7 +76,7 @@ class Campaign(object):
             else:
                 self._type = None
 
-        self.creation_time = datetime.new()
+        self.creation_time = datetime.utcnow()
 
     def validate(self):
         if not self.source:
@@ -95,7 +95,7 @@ class Campaign(object):
         if len(parts) != 5:
             utils.pyga_logger('The given "__utmz" cookie value is invalid.')
 
-        self.creation_time = datetime.fromtimestamp(parts[1])
+        self.creation_time = datetime.utcfromtimestamp(parts[1])
         self.response_count = parts[3]
         params.insert(0, parts[4])
 
@@ -288,7 +288,7 @@ class Session(object):
     def __init__(self):
         self.session_id = utils.get_32bit_random_num()
         self.track_count = 0
-        self.start_time = datetime.now()
+        self.start_time = datetime.utcnow()
 
     @staticmethod
     def generate_session_id():
@@ -304,7 +304,7 @@ class Session(object):
             utils.pyga_logger('The given "__utmb" cookie value is invalid.')
 
         self.track_count = parts[1]
-        self.start_time = datetime.fromtimestamp(parts[3])
+        self.start_time = datetime.utcfromtimestamp(parts[3])
 
         return self
 
@@ -396,7 +396,7 @@ class Visitor(object):
     screen_resolution -- Visitor's screen resolution, will be mapped to "utmsr" parameter
     '''
     def __init__(self):
-        now = datetime.now()
+        now = datetime.utcnow()
 
         self.unique_id = None
         self.first_visit_time = now
@@ -434,9 +434,9 @@ class Visitor(object):
             utils.pyga_logger('The given "__utma" cookie value is invalid.')
 
         self.unique_id = parts[1]
-        self.first_visit_time = datetime.fromtimestamp(parts[2])
-        self.previous_visit_time = datetime.fromtimestamp(parts[3])
-        self.current_visit_time = datetime.fromtimestamp(parts[4])
+        self.first_visit_time = datetime.utcfromtimestamp(parts[2])
+        self.previous_visit_time = datetime.utcfromtimestamp(parts[3])
+        self.current_visit_time = datetime.utcfromtimestamp(parts[4])
         self.visit_count = parts[5]
 
         return self
