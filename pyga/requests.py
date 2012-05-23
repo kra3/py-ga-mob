@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from sys import stderr
 import calendar
 from math import floor
@@ -10,6 +11,8 @@ import urllib2
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
+
+logger = logging.getLogger(__name__)
 
 
 class Q(object):
@@ -67,9 +70,9 @@ class GIFRequest(object):
             headers['Content-Type'] = 'text/plain'
             headers['Content-Length'] = len(query_string)
 
-        utils.pyga_logger(url)
+        logger.debug(url)
         if post:
-            utils.pyga_logger(post)
+            logger.debug(post)
         return urllib2.Request(url, post, headers)
 
     def build_parameters(self):
@@ -77,16 +80,12 @@ class GIFRequest(object):
         return Parameters()
 
     def __send(self):
-        request =  self.build_http_request()
+        request = self.build_http_request()
         response = None
 
         #  Do not actually send the request if endpoint host is set to null
         if self.config.endpoint:
-            try:
-                response = urllib2.urlopen(request, timeout=self.config.request_timeout)
-            except Exception, e:
-                utils.pyga_logger(e)
-                utils.pyga_logger("error with request")
+            response = urllib2.urlopen(request, timeout=self.config.request_timeout)
 
         return response
 
@@ -120,7 +119,6 @@ class Request(GIFRequest):
     X10_CUSTOMVAR_VALUE_PROJCT_ID = 9
     X10_CUSTOMVAR_SCOPE_PROJECT_ID = 11
 
-
     def __init__(self, config, tracker, visitor, session):
         super(Request, self).__init__(config)
         self.tracker = tracker
@@ -136,7 +134,7 @@ class Request(GIFRequest):
 
         #http://code.google.com/intl/de-DE/apis/analytics/docs/tracking/eventTrackerGuide.html#implementationConsiderations
         if self.session.track_count > 500:
-            utils.pyga_logger('Google Analytics does not guarantee to process more than 500 requests per session.')
+            logger.warning('Google Analytics does not guarantee to process more than 500 requests per session.')
 
         if self.tracker.campaign:
             self.tracker.campaign.response_count = self.tracker.campaign.response_count + 1
@@ -190,7 +188,7 @@ class Request(GIFRequest):
 
         if custom_vars:
             if len(custom_vars) > 5:
-                utils.pyga_logger('The sum of all custom variables cannot exceed 5 in any given request.')
+                logger.warning('The sum of all custom variables cannot exceed 5 in any given request.')
 
             x10 = X10()
             x10.clear_key(self.X10_CUSTOMVAR_NAME_PROJECT_ID)
@@ -482,8 +480,8 @@ class Config(object):
 
     def __setattr__(self, name, value):
         if name == 'site_speed_sample_rate':
-            if value and (value < 0 or value >100):
-                utils.pyga_logger('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
+            if value and (value < 0 or value > 100):
+                raise ValueError('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
         object.__setattr__(self, name, value)
 
 
@@ -784,7 +782,7 @@ class Tracker(object):
 
     http://code.google.com/apis/analytics/docs/gaJS/changelog.html
     '''
-    VERSION = '5.2.5' # As of 25.02.2012
+    VERSION = '5.2.5'  # As of 25.02.2012
     config = Config()
 
     def __init__(self, account_id='', domain_name='', conf=None):
@@ -799,7 +797,7 @@ class Tracker(object):
     def __setattr__(self, name, value):
         if name == 'account_id':
             if value and not utils.is_valid_google_account(value):
-                utils.pyga_logger('Given Google Analytics account ID is not valid')
+                raise ValueError('Given Google Analytics account ID is not valid')
 
         elif name == 'campaign':
             if isinstance(value, Campaign):
@@ -823,7 +821,7 @@ class Tracker(object):
 
     def remove_custom_variable(self, index):
         '''Equivalent of _deleteCustomVar() in GA Javascript client.'''
-        if self.custom_variables.has_key(index):
+        if index in self.custom_variables:
             del self.custom_variables[index]
 
     def track_pageview(self, page, session, visitor):
@@ -879,7 +877,6 @@ class Tracker(object):
             request = ItemRequest(**params)
             request.fire()
 
-
     def track_social(self, social_interaction, page, session, visitor):
         '''Equivalent of _trackSocial() in GA Javascript client.'''
         params = {
@@ -892,23 +889,6 @@ class Tracker(object):
         }
         request = SocialInteractionRequest(**params)
         request.fire()
-
-
-    def _raise_error(self, message):
-        error_severity = self.config.error_severity
-        if error_severity ==  Tracker.ERROR_SEVERITY_SILECE:
-            # TODO: Log
-            pass
-        if error_severity == Tracker.ERROR_SEVERITY_LOG:
-            # TODO: Log
-            stderr.write(message)
-            stderr.flush()
-        elif error_severity == Tracker.ERROR_SEVERITY_RAISE:
-            # TODO: Log
-            utils.pyga_logger(message)
-        else:
-            # TODO: Log
-            pass
 
 
 class X10(object):
@@ -935,7 +915,7 @@ class X10(object):
         self.project_data = {}
 
     def has_project(self, project_id):
-        return project_data.has_key(project_id)
+        return project_id in self.project_data
 
     def set_key(self, project_id, num, value):
         self.__set_internal(project_id, X10.__KEY, num, value)
@@ -957,17 +937,17 @@ class X10(object):
 
     def __set_internal(self, project_id, _type, num, value):
         '''Shared internal implementation for setting an X10 data type.'''
-        if not self.project_data.has_key(project_id):
+        if project_id not in self.project_data:
             self.project_data[project_id] = {}
 
-        if not self.project_data[project_id].has_key(_type):
+        if _type not in self.project_data[project_id]:
             self.project_data[project_id][_type] = {}
 
         self.project_data[project_id][_type][num] = value
 
     def __get_internal(self, project_id, _type, num):
         ''' Shared internal implementation for getting an X10 data type.'''
-        if self.project_data.get(project_id, {}).get(_type, {}).has_key(num):
+        if num in self.project_data.get(project_id, {}).get(_type, {}):
             return self.project_data[project_id][_type][num]
         return None
 
@@ -976,7 +956,7 @@ class X10(object):
         Shared internal implementation for clearing all X10 data
         of a type from a certain project.
         '''
-        if self.project_data.has_key(project_id) and self.project_data[project_id].has_key(_type):
+        if project_id in self.project_data and _type in self.project_data[project_id]:
             del self.project_data[project_id][_type]
 
     def __escape_extensible_value(self, value):
@@ -1000,7 +980,7 @@ class X10(object):
 
                 # Check if we need to append the number. If the last number was
                 # outputted, or if this is the assumed minimum, then we don't.
-                if indx != X10.__MINIMUM and indx-1 != last_indx:
+                if indx != X10.__MINIMUM and indx - 1 != last_indx:
                     tmpstr = '%s%s%s' % (tmpstr, indx, X10.__DELIM_NUM_VALUE)
 
                 tmpstr = '%s%s' % (tmpstr, self.__escape_extensible_value(entry))
@@ -1008,20 +988,20 @@ class X10(object):
 
             last_indx = indx
 
-        return "%s%s%s" % (X10.__DELIM_BEGIN, X10.__DELIM_SET.join(result) ,X10.__DELIM_END)
+        return "%s%s%s" % (X10.__DELIM_BEGIN, X10.__DELIM_SET.join(result), X10.__DELIM_END)
 
     def __render_project(self, project):
         '''Given a project array, render its string encoding.'''
         result = ''
-        need_type_qualifier =  False
+        need_type_qualifier = False
 
         for val in X10.__KEY, X10.__VALUE:
-            if project.has_key(val):
+            if val in project:
                 data = project[val]
                 if need_type_qualifier:
                     result = '%s%s' % (result, val)
 
-                result = '%s%s'  % (result, self.__render_data_type(data))
+                result = '%s%s' % (result, self.__render_data_type(data))
                 need_type_qualifier = False
             else:
                 need_type_qualifier = True
