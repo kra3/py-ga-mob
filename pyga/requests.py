@@ -229,7 +229,7 @@ class Request(GIFRequest):
                 'utmcct': campaign.content,
             }
 
-            for k, v in param_map:
+            for k, v in param_map.iteritems():
                 if v:
                     # Only spaces and pluses get escaped in gaforflash and ga.js, so we do the same
                     params._utmz = '%s%s=%s%s' % (params._utmz, k,
