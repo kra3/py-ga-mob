@@ -107,15 +107,3 @@ def stringify(s, stype=None, fn=None):
                 except UnicodeDecodeError:
                     return s.decode('ascii', 'replace')
     return s
-
-def pyga_logger(obj, is_exception=False):
-    logger = logging.getLogger('pyga')
-    try:
-        txt = stringify(obj)
-        if txt:
-            if is_exception:
-                logger.exception('%s' %txt)
-            else:
-                logger.debug('%s' %txt)
-    except:
-        pass
