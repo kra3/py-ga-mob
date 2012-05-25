@@ -455,9 +455,9 @@ class Visitor(object):
                     ips = meta.get(key, '').split(',')
                     ip = ips[len(ips) - 1].strip()
                     if not utils.is_valid_ip(ip):
-                        ip = None
+                        ip = '' 
                     if utils.is_private_ip(ip):
-                        ip = None
+                        ip = ''
             if ip:
                 self.ip_address = ip
 
