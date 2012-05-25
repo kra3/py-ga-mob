@@ -4,7 +4,8 @@ from datetime import datetime
 from operator import itemgetter
 from urlparse import urlparse
 from urllib import unquote_plus
-import pyga.utils as utils
+from pyga import utils
+from pyga import exceptions
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -44,6 +45,16 @@ class Campaign(object):
 
     CAMPAIGN_DELIMITER = '|'
 
+    UTMZ_PARAM_MAP = {
+        'utmcid': 'id',
+        'utmcsr': 'source',
+        'utmgclid': 'g_click_id',
+        'utmdclid': 'd_click_id',
+        'utmccn': 'name',
+        'utmcmd': 'medium',
+        'utmctr': 'term',
+        'utmcct': 'content',
+    }
 
     def __init__(self, typ):
         self._type = None
@@ -60,7 +71,7 @@ class Campaign(object):
 
         if typ:
             if typ not in ('direct', 'organic', 'referral'):
-                utils.pyga_logger('Campaign type has to be one of the Campaign::TYPE_* constant values.')
+                raise ValueError('Campaign type has to be one of the Campaign::TYPE_* constant values.')
 
             self._type = typ
             if typ == Campaign.TYPE_DIRECT:
@@ -76,11 +87,11 @@ class Campaign(object):
             else:
                 self._type = None
 
-        self.creation_time = datetime.new()
+        self.creation_time = datetime.utcnow()
 
     def validate(self):
         if not self.source:
-            utils.pyga_logger('Campaigns need to have at least the "source" attribute defined.')
+            raise exceptions.ValidationError('Campaigns need to have at least the "source" attribute defined.')
 
     def create_from_referrer(self, url):
         obj = Campaign(Campaign.TYPE_REFERRAL)
@@ -93,28 +104,19 @@ class Campaign(object):
         params = utmz.split(Campaign.CAMPAIGN_DELIMITER)
         parts = params[0].split('.', 5)
         if len(parts) != 5:
-            utils.pyga_logger('The given "__utmz" cookie value is invalid.')
+            raise ValueError('The given "__utmz" cookie value is invalid.')
 
-        self.creation_time = datetime.fromtimestamp(parts[1])
-        self.response_count = parts[3]
+        self.creation_time = datetime.utcfromtimestamp(float(parts[1]))
+        self.response_count = int(parts[3])
         params.insert(0, parts[4])
 
         for param in params:
             key, val = param.split('=')
 
-            param_map = {
-                'utmcid': 'id',
-                'utmcsr': 'source',
-                'utmgclid': 'g_click_id',
-                'utmdclid': 'd_click_id',
-                'utmccn': 'name',
-                'utmcmd': 'medium',
-                'utmctr': 'term',
-                'utmcct': 'content',
-            }
-
-            if param_map.has_key(key):
-                setattr(self, param_map[key], unquote_plus(val))
+            try:
+                setattr(self, self.UTMZ_PARAM_MAP[key], unquote_plus(val))
+            except KeyError:
+                pass
 
         return self
 
@@ -151,14 +153,14 @@ class CustomVariable(object):
     def __setattr__(self, name, value):
         if name == 'scope':
             if value and value not in range(1, 4):
-                utils.pyga_logger('Custom Variable scope has to be one of the 1,2 or 3')
+                raise ValueError('Custom Variable scope has to be one of the 1,2 or 3')
 
         if name == 'index':
             # Custom Variables are limited to five slots officially, but there seems to be a
             # trick to allow for more of them which we could investigate at a later time (see
             # http://analyticsimpact.com/2010/05/24/get-more-than-5-custom-variables-in-google-analytics/
             if value and (value < 0 or value > 5):
-                utils.pyga_logger('Custom Variable index has to be between 1 and 5.')
+                raise ValueError('Custom Variable index has to be between 1 and 5.')
 
         object.__setattr__(self, name, value)
 
@@ -172,7 +174,7 @@ class CustomVariable(object):
         see http://code.google.com/apis/analytics/community/gajs_changelog.html
         '''
         if len('%s%s' % (self.name, self.value)) > 128:
-            utils.pyga_logger('Custom Variable combined name and value length must not be larger than 128 bytes.')
+            raise exceptions.ValidationError('Custom Variable combined name and value length must not be larger than 128 bytes.')
 
 
 class Event(object):
@@ -206,7 +208,7 @@ class Event(object):
 
     def validate(self):
         if not(self.category and self.action):
-            utils.pyga_logger('Events, at least need to have a category and action defined.')
+            raise exceptions.ValidationError('Events, at least need to have a category and action defined.')
 
 
 class Item(object):
@@ -233,7 +235,7 @@ class Item(object):
 
     def validate(self):
         if not self.sku:
-            utils.pyga_logger('sku/product is a required parameter')
+            raise exceptions.ValidationError('sku/product is a required parameter')
 
 
 class Page(object):
@@ -258,16 +260,16 @@ class Page(object):
         self.load_time = None
 
         if path:
-            self.path= path
+            self.path = path
 
     def __setattr__(self, name, value):
         if name == 'path':
             if value and value != '':
                 if value[0] != '/':
-                    utils.pyga_logger('The page path should always start with a slash ("/").')
+                    raise ValueError('The page path should always start with a slash ("/").')
         elif name == 'load_time':
             if value and not isinstance(value, int):
-                utils.pyga_logger('Page load time must be specified in integer milliseconds.')
+                raise ValueError('Page load time must be specified in integer milliseconds.')
 
         object.__setattr__(self, name, value)
 
@@ -288,7 +290,7 @@ class Session(object):
     def __init__(self):
         self.session_id = utils.get_32bit_random_num()
         self.track_count = 0
-        self.start_time = datetime.now()
+        self.start_time = datetime.utcnow()
 
     @staticmethod
     def generate_session_id():
@@ -301,10 +303,10 @@ class Session(object):
         '''
         parts = utmb.split('.')
         if len(parts) != 4:
-            utils.pyga_logger('The given "__utmb" cookie value is invalid.')
+            raise ValueError('The given "__utmb" cookie value is invalid.')
 
-        self.track_count = parts[1]
-        self.start_time = datetime.fromtimestamp(parts[3])
+        self.track_count = int(parts[1])
+        self.start_time = datetime.utcfromtimestamp(float(parts[3]))
 
         return self
 
@@ -328,7 +330,7 @@ class SocialInteraction(object):
 
     def validate(self):
         if not(self.action and self.network):
-            utils.pyga_logger('Social interactions need to have at least the "network" and "action" attributes defined.')
+            raise exceptions.ValidationError('Social interactions need to have at least the "network" and "action" attributes defined.')
 
 
 class Transaction(object):
@@ -366,7 +368,7 @@ class Transaction(object):
 
     def validate(self):
         if len(self.items) == 0:
-            utils.pyga_logger('Transaction need to consist of at least one item')
+            raise exceptions.ValidationError('Transaction need to consist of at least one item')
 
     def add_item(self, item):
         ''' item of type entities.Item '''
@@ -396,7 +398,7 @@ class Visitor(object):
     screen_resolution -- Visitor's screen resolution, will be mapped to "utmsr" parameter
     '''
     def __init__(self):
-        now = datetime.now()
+        now = datetime.utcnow()
 
         self.unique_id = None
         self.first_visit_time = now
@@ -414,7 +416,7 @@ class Visitor(object):
     def __setattr__(self, name, value):
         if name == 'unique_id':
             if value and value < 0 or value > 0x7fffffff:
-                utils.pyga_logger('Visitor unique ID has to be a 32-bit integer between 0 and 0x7fffffff')
+                raise ValueError('Visitor unique ID has to be a 32-bit integer between 0 and 0x7fffffff')
         object.__setattr__(self, name, value)
 
     def __getattribute__(self, name):
@@ -431,13 +433,13 @@ class Visitor(object):
         '''
         parts = utma.split('.')
         if len(parts) != 6:
-            utils.pyga_logger('The given "__utma" cookie value is invalid.')
+            raise ValueError('The given "__utma" cookie value is invalid.')
 
-        self.unique_id = parts[1]
-        self.first_visit_time = datetime.fromtimestamp(parts[2])
-        self.previous_visit_time = datetime.fromtimestamp(parts[3])
-        self.current_visit_time = datetime.fromtimestamp(parts[4])
-        self.visit_count = parts[5]
+        self.unique_id = int(parts[1])
+        self.first_visit_time = datetime.utcfromtimestamp(float(parts[2]))
+        self.previous_visit_time = datetime.utcfromtimestamp(float(parts[3]))
+        self.current_visit_time = datetime.utcfromtimestamp(float(parts[4]))
+        self.visit_count = int(parts[5])
 
         return self
 
@@ -446,12 +448,12 @@ class Visitor(object):
         Will extract information for the "ip_address", "user_agent" and "locale"
         properties from the given WSGI REQUEST META variable or equivalent.
         '''
-        if meta.has_key('REMOTE_ADDR') and meta['REMOTE_ADDR']:
+        if 'REMOTE_ADDR' in meta and meta['REMOTE_ADDR']:
             ip = None
             for key in ('HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'):
-                if meta.has_key(key) and not ip:
+                if key in meta and not ip:
                     ips = meta.get(key, '').split(',')
-                    ip = ips[len(ips)-1].strip()
+                    ip = ips[len(ips) - 1].strip()
                     if not utils.is_valid_ip(ip):
                         ip = None
                     if utils.is_private_ip(ip):
@@ -459,16 +461,16 @@ class Visitor(object):
             if ip:
                 self.ip_address = ip
 
-        if meta.has_key('HTTP_USER_AGENT') and meta['HTTP_USER_AGENT']:
+        if 'HTTP_USER_AGENT' in meta and meta['HTTP_USER_AGENT']:
             self.user_agent = meta['HTTP_USER_AGENT']
 
-        if meta.has_key('HTTP_ACCEPT_LANGUAGE') and meta['HTTP_ACCEPT_LANGUAGE']:
+        if 'HTTP_ACCEPT_LANGUAGE' in meta and meta['HTTP_ACCEPT_LANGUAGE']:
             user_locals = []
             matched_locales = utils.validate_locale(meta['HTTP_ACCEPT_LANGUAGE'])
             if matched_locales:
                 lang_lst = map((lambda x: x.replace('-', '_')), (i[1] for i in matched_locales))
                 quality_lst = map((lambda x: x and x or 1), (float(i[4] and i[4] or '0') for i in matched_locales))
-                lang_quality_map = map((lambda x,y: (x,y)), lang_lst, quality_lst)
+                lang_quality_map = map((lambda x, y: (x, y)), lang_lst, quality_lst)
                 user_locals = [x[0] for x in sorted(lang_quality_map, key=itemgetter(1), reverse=True)]
 
             if user_locals:
