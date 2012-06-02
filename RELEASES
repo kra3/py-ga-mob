@@ -1,0 +1,6 @@
+# Version 2.2
+- Patch from paperlabs to use utc timestamps.
+- NB: library now throws exceptions, so you now have to catch them.
+
+# Version 2.1
+- Fixed a typo which caused language to not populate on reports.
