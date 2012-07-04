@@ -426,6 +426,13 @@ class Visitor(object):
                 self.unique_id = self.generate_unique_id()
         return object.__getattribute__(self, name)
 
+    def __getstate__(self):
+        state = self.__dict__
+        if state.get('user_agent') is None:
+            state['unique_id'] = self.generate_unique_id()
+
+        return state
+
     def extract_from_utma(self, utma):
         '''
         Will extract information for the "unique_id", "first_visit_time", "previous_visit_time",
@@ -455,7 +462,7 @@ class Visitor(object):
                     ips = meta.get(key, '').split(',')
                     ip = ips[len(ips) - 1].strip()
                     if not utils.is_valid_ip(ip):
-                        ip = '' 
+                        ip = ''
                     if utils.is_private_ip(ip):
                         ip = ''
             if ip:
