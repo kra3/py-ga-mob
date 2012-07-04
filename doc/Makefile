@@ -4,7 +4,7 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
+SPHINXBUILD   = sphinx-build2
 PAPER         =
 BUILDDIR      = _build
 
@@ -39,6 +39,7 @@ clean:
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	cp -r _build/html/* ../build/docs
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
