@@ -1,5 +1,9 @@
+# Version 2.3
+- Patch from github.com/jaysonsantos to workaround a problem when serializing `Visitor` objects. 
+- See issue 3 for more info
+
 # Version 2.2
-- Patch from paperlabs to use utc timestamps.
+- Patch from github.com/paperlabs TO USE UTc timestamps.
 - NB: library now throws exceptions, so you now have to catch them.
 
 # Version 2.1
