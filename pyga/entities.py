@@ -101,14 +101,14 @@ class Campaign(object):
         return obj
 
     def extract_from_utmz(self, utmz):
-        params = utmz.split(Campaign.CAMPAIGN_DELIMITER)
-        parts = params[0].split('.', 5)
+        parts = utmz.split('.', 4)
+
         if len(parts) != 5:
             raise ValueError('The given "__utmz" cookie value is invalid.')
 
         self.creation_time = datetime.utcfromtimestamp(float(parts[1]))
         self.response_count = int(parts[3])
-        params.insert(0, parts[4])
+        params = parts[4].split(Campaign.CAMPAIGN_DELIMITER)
 
         for param in params:
             key, val = param.split('=')
