@@ -62,8 +62,8 @@ class GIFRequest(object):
 
         headers = {}
         headers['Host'] = self.config.endpoint.split('/')[2]
-        headers['USER_AGENT'] = self.user_agent
-        headers['X_FORWARDED_FOR'] = self.x_forwarded_for and  self.x_forwarded_for or ''
+        headers['User-Agent'] = self.user_agent
+        headers['X-Forwarded-For'] = self.x_forwarded_for and  self.x_forwarded_for or ''
 
         if use_post:
             # Don't ask me why "text/plain", but ga.js says so :)
