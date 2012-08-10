@@ -106,7 +106,7 @@ class Campaign(object):
         if len(parts) != 5:
             raise ValueError('The given "__utmz" cookie value is invalid.')
 
-        self.creation_time = datetime.utcfromtimestamp(float(parts[1]))
+        self.creation_time = utils.convert_ga_timestamp(parts[1])
         self.response_count = int(parts[3])
         params = parts[4].split(Campaign.CAMPAIGN_DELIMITER)
 
@@ -306,7 +306,7 @@ class Session(object):
             raise ValueError('The given "__utmb" cookie value is invalid.')
 
         self.track_count = int(parts[1])
-        self.start_time = datetime.utcfromtimestamp(float(parts[3]))
+        self.start_time = utils.convert_ga_timestamp(parts[3])
 
         return self
 
@@ -443,9 +443,9 @@ class Visitor(object):
             raise ValueError('The given "__utma" cookie value is invalid.')
 
         self.unique_id = int(parts[1])
-        self.first_visit_time = datetime.utcfromtimestamp(float(parts[2]))
-        self.previous_visit_time = datetime.utcfromtimestamp(float(parts[3]))
-        self.current_visit_time = datetime.utcfromtimestamp(float(parts[4]))
+        self.first_visit_time = utils.convert_ga_timestamp(parts[2])
+        self.previous_visit_time = utils.convert_ga_timestamp(parts[3])
+        self.current_visit_time = utils.convert_ga_timestamp(parts[4])
         self.visit_count = int(parts[5])
 
         return self
