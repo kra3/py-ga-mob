@@ -1,3 +1,9 @@
+# Version 2.4
+- flexible time-stamp handling,
+- fix for utmz parsing
+- one more test case
+Thanks for @nsitarz (Nick Sitarz).
+
 # Version 2.3
 - Patch from github.com/jaysonsantos to workaround a problem when serializing `Visitor` objects. 
 - See issue 3 for more info

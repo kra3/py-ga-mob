@@ -5,6 +5,7 @@ from random import randint
 import re
 import urllib
 import os
+from datetime import datetime
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -14,6 +15,12 @@ RE_PRIV_IP = re.compile(r'^(?:127\.0\.0\.1|10\.|192\.168\.|172\.(?:1[6-9]|2[0-9]
 RE_LOCALE = re.compile(r'(^|\s*,\s*)([a-zA-Z]{1,8}(-[a-zA-Z]{1,8})*)\s*(;\s*q\s*=\s*(1(\.0{0,3})?|0(\.[0-9]{0,3})))?', re.I)
 RE_GA_ACCOUNT_ID = re.compile(r'^(UA|MO)-[0-9]*-[0-9]*$')
 RE_FIRST_THREE_OCTETS_OF_IP = re.compile(r'^((\d{1,3}\.){3})\d{1,3}$')
+
+def convert_ga_timestamp(timestamp_string):
+    timestamp = float(timestamp_string)
+    if timestamp > ((2 ** 31) - 1):
+        timestamp /= 1000
+    return datetime.utcfromtimestamp(timestamp)
 
 def get_32bit_random_num():
     return randint(0, 0x7fffffff)
