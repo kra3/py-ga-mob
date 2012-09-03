@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from sys import stderr
 import calendar
 from math import floor
 from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
@@ -63,7 +62,7 @@ class GIFRequest(object):
         headers = {}
         headers['Host'] = self.config.endpoint.split('/')[2]
         headers['User-Agent'] = self.user_agent
-        headers['X-Forwarded-For'] = self.x_forwarded_for and  self.x_forwarded_for or ''
+        headers['X-Forwarded-For'] = self.x_forwarded_for and self.x_forwarded_for or ''
 
         if use_post:
             # Don't ask me why "text/plain", but ga.js says so :)
@@ -85,7 +84,8 @@ class GIFRequest(object):
 
         #  Do not actually send the request if endpoint host is set to null
         if self.config.endpoint:
-            response = urllib2.urlopen(request, timeout=self.config.request_timeout)
+            response = urllib2.urlopen(
+                request, timeout=self.config.request_timeout)
 
         return response
 
@@ -198,11 +198,14 @@ class Request(GIFRequest):
             for cvar in custom_vars.itervalues():
                 name = utils.encode_uri_components(cvar.name)
                 value = utils.encode_uri_components(cvar.value)
-                x10.set_key(self.X10_CUSTOMVAR_NAME_PROJECT_ID, cvar.index, name)
-                x10.set_key(self.X10_CUSTOMVAR_VALUE_PROJCT_ID, cvar.index, value)
+                x10.set_key(
+                    self.X10_CUSTOMVAR_NAME_PROJECT_ID, cvar.index, name)
+                x10.set_key(
+                    self.X10_CUSTOMVAR_VALUE_PROJCT_ID, cvar.index, value)
 
                 if cvar.scope and cvar.scope != CustomVariable.SCOPE_PAGE:
-                    x10.set_key(self.X10_CUSTOMVAR_SCOPE_PROJECT_ID, cvar.index, cvar.scope)
+                    x10.set_key(self.X10_CUSTOMVAR_SCOPE_PROJECT_ID,
+                                cvar.index, cvar.scope)
 
             params.utme = '%s%s' % (params.utme, x10.render_url_string())
 
@@ -212,11 +215,11 @@ class Request(GIFRequest):
         campaign = self.tracker.campaign
         if campaign:
             params._utmz = '%s.%s.%s.%s.' % (
-                    self._generate_domain_hash(),
-                    calendar.timegm(campaign.creation_time.timetuple()),
-                    self.visitor.visit_count,
-                    campaign.response_count,
-                )
+                self._generate_domain_hash(),
+                calendar.timegm(campaign.creation_time.timetuple()),
+                self.visitor.visit_count,
+                campaign.response_count,
+            )
 
             param_map = {
                 'utmcid': campaign.id,
@@ -233,9 +236,9 @@ class Request(GIFRequest):
                 if v:
                     # Only spaces and pluses get escaped in gaforflash and ga.js, so we do the same
                     params._utmz = '%s%s=%s%s' % (params._utmz, k,
-                            v.replace('+', '%20').replace(' ', '%20'),
-                            Campaign.CAMPAIGN_DELIMITER
-                        )
+                                                  v.replace('+', '%20').replace(' ', '%20'),
+                                                  Campaign.CAMPAIGN_DELIMITER
+                                                  )
 
             params._utmz = params._utmz.rstrip(Campaign.CAMPAIGN_DELIMITER)
 
@@ -244,18 +247,18 @@ class Request(GIFRequest):
     def build_cookie_parameters(self, params):
         domain_hash = self._generate_domain_hash()
         params._utma = "%s.%s.%s.%s.%s.%s" % (
-                domain_hash,
-                self.visitor.unique_id,
-                calendar.timegm(self.visitor.first_visit_time.timetuple()),
-                calendar.timegm(self.visitor.previous_visit_time.timetuple()),
-                calendar.timegm(self.visitor.current_visit_time.timetuple()),
-                self.visitor.visit_count
-            )
+            domain_hash,
+            self.visitor.unique_id,
+            calendar.timegm(self.visitor.first_visit_time.timetuple()),
+            calendar.timegm(self.visitor.previous_visit_time.timetuple()),
+            calendar.timegm(self.visitor.current_visit_time.timetuple()),
+            self.visitor.visit_count
+        )
         params._utmb = '%s.%s.10.%s' % (
-                domain_hash,
-                self.session.track_count,
-                calendar.timegm(self.session.start_time.timetuple()),
-            )
+            domain_hash,
+            self.session.track_count,
+            calendar.timegm(self.session.start_time.timetuple()),
+        )
         params._utmc = domain_hash
         cookies = []
         cookies.append('__utma=%s;' % params._utma)
@@ -312,7 +315,8 @@ class PageViewRequest(Request):
     X10_SITESPEED_PROJECT_ID = 14
 
     def __init__(self, config, tracker, visitor, session, page):
-        super(PageViewRequest, self).__init__(config, tracker, visitor, session)
+        super(
+            PageViewRequest, self).__init__(config, tracker, visitor, session)
         self.page = page
 
     def get_type(self):
@@ -330,15 +334,17 @@ class PageViewRequest(Request):
             params.utmr = self.page.referrer
 
         if self.page.load_time:
-            if params.utmn % 100 <  self.config.site_speed_sample_rate:
+            if params.utmn % 100 < self.config.site_speed_sample_rate:
                 x10 = X10()
                 x10.clear_key(self.X10_SITESPEED_PROJECT_ID)
                 x10.clear_value(self.X10_SITESPEED_PROJECT_ID)
 
                 # from ga.js
                 key = max(min(floor(self.page.load_time / 100), 5000), 0) * 100
-                x10.set_key(self.X10_SITESPEED_PROJECT_ID, X10.OBJECT_KEY_NUM, key)
-                x10.set_value(self.X10_SITESPEED_PROJECT_ID, X10.VALUE_VALUE_NUM, self.page.load_time)
+                x10.set_key(
+                    self.X10_SITESPEED_PROJECT_ID, X10.OBJECT_KEY_NUM, key)
+                x10.set_value(self.X10_SITESPEED_PROJECT_ID,
+                              X10.VALUE_VALUE_NUM, self.page.load_time)
                 params.utme = '%s%s' % (params.utme, x10.render_url_string())
 
         return params
@@ -359,14 +365,18 @@ class EventRequest(Request):
         x10 = X10()
         x10.clear_key(self.X10_EVENT_PROJECT_ID)
         x10.clear_value(self.X10_EVENT_PROJECT_ID)
-        x10.set_key(self.X10_EVENT_PROJECT_ID, X10.OBJECT_KEY_NUM, self.event.category)
-        x10.set_key(self.X10_EVENT_PROJECT_ID, X10.TYPE_KEY_NUM, self.event.action)
+        x10.set_key(self.X10_EVENT_PROJECT_ID, X10.OBJECT_KEY_NUM,
+                    self.event.category)
+        x10.set_key(
+            self.X10_EVENT_PROJECT_ID, X10.TYPE_KEY_NUM, self.event.action)
 
         if self.event.label:
-            x10.set_key(self.X10_EVENT_PROJECT_ID, X10.LABEL_KEY_NUM, self.event.label)
+            x10.set_key(self.X10_EVENT_PROJECT_ID,
+                        X10.LABEL_KEY_NUM, self.event.label)
 
         if self.event.value:
-            x10.set_value(self.X10_EVENT_PROJECT_ID, X10.VALUE_VALUE_NUM, self.event.value)
+            x10.set_value(self.X10_EVENT_PROJECT_ID,
+                          X10.VALUE_VALUE_NUM, self.event.value)
 
         params.utme = "%s%s" % (params.utme, x10.render_url_string())
 
@@ -378,7 +388,8 @@ class EventRequest(Request):
 
 class SocialInteractionRequest(Request):
     def __init__(self, config, tracker, visitor, session, social_interaction, page):
-        super(SocialInteractionRequest, self).__init__(config, tracker, visitor, session)
+        super(SocialInteractionRequest, self).__init__(config,
+                                                       tracker, visitor, session)
         self.social_interaction = social_interaction
         self.page = page
 
@@ -389,7 +400,7 @@ class SocialInteractionRequest(Request):
         params = super(SocialInteractionRequest, self).build_parameters()
 
         tmppagepath = self.social_interaction.target
-        if tmppagepath == None:
+        if tmppagepath is None:
             tmppagepath = self.page.path
 
         params.utmsn = self.social_interaction.network
@@ -400,8 +411,9 @@ class SocialInteractionRequest(Request):
 
 class TransactionRequest(Request):
     def __init__(self, config, tracker, visitor, session, transaction):
-        super(TransactionRequest, self).__init__(config, tracker, visitor, session)
-        self.transaction =  transaction
+        super(TransactionRequest, self).__init__(config, tracker,
+                                                 visitor, session)
+        self.transaction = transaction
 
     def get_type(self):
         return TransactionRequest.TYPE_TRANSACTION
@@ -797,7 +809,8 @@ class Tracker(object):
     def __setattr__(self, name, value):
         if name == 'account_id':
             if value and not utils.is_valid_google_account(value):
-                raise ValueError('Given Google Analytics account ID is not valid')
+                raise ValueError(
+                    'Given Google Analytics account ID is not valid')
 
         elif name == 'campaign':
             if isinstance(value, Campaign):
@@ -983,7 +996,8 @@ class X10(object):
                 if indx != X10.__MINIMUM and indx - 1 != last_indx:
                     tmpstr = '%s%s%s' % (tmpstr, indx, X10.__DELIM_NUM_VALUE)
 
-                tmpstr = '%s%s' % (tmpstr, self.__escape_extensible_value(entry))
+                tmpstr = '%s%s' % (
+                    tmpstr, self.__escape_extensible_value(entry))
                 result.append(tmpstr)
 
             last_indx = indx
@@ -1011,6 +1025,7 @@ class X10(object):
     def render_url_string(self):
         result = ''
         for project_id, project in self.project_data.iteritems():
-            result = '%s%s%s' % (result, project_id, self.__render_project(project))
+            result = '%s%s%s' % (
+                result, project_id, self.__render_project(project))
 
         return result
