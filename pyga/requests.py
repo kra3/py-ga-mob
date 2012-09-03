@@ -10,7 +10,7 @@ import urllib2
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
-__version__ = '2.5'
+__version__ = '2.4.2'
 
 logger = logging.getLogger(__name__)
 
