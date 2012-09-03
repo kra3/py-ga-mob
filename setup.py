@@ -4,16 +4,17 @@
 import os
 from setuptools import setup, find_packages
 
-ver = '2.4'
+from pyga.requests import __version__, __license__
+
 README = os.path.join(os.path.dirname(__file__), 'README.rst')
 long_desc = open(README).read() + '\n\n'
 
 setup(name='pyga',
-      version=ver,
+      version=__version__,
+      license=__license__,
       author='Arun K.R.',
       author_email='the1.arun@gmail.com',
       url='http://kra3.github.com/py-ga-mob/',
-      license='Simplified BSD',
       description='Server side implemenation of Google Analytics in Python.',
       long_description=long_desc,
       keywords='google analytics  mobile serverside',
