@@ -15,7 +15,7 @@
 
     <header>
       <div class="container">
-        <h1>Py-ga-mob</h1> 
+        <h1>Py-ga-mob</h1>
         <h2>PYGA: Python Google Analytics - Data Collection API</h2>
 
         <section id="downloads">
@@ -29,10 +29,6 @@
     <div class="container">
       <section id="main_content">
         <h1>PYGA: Python Google Analytics - Data Collection API</h1>
-
-<a href="http://travis-ci.org/kra3/py-ga-mob">
- <img src="https://secure.travis-ci.org/kra3/py-ga-mob.png?branch=master" alt="Build Status" />
-</a> 
 
 <p>pyga is an iplementation of Google Analytics in Python;so that it can be used at server side.
 This project only helps you with Data Collection part of Google Analytics.
@@ -75,8 +71,7 @@ Also with a basic sample of server side implementation in quite a few languages 
 
 <h2>Example</h2>
 
-<div class="highlight">
-<pre>     <span class="kn">from</span> <span class="nn">pyga.requests</span> <span class="kn">import</span> <span class="n">Tracker</span><span class="p">,</span> <span class="n">Page</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">Visitor</span>
+<div class="highlight"><pre>     <span class="kn">from</span> <span class="nn">pyga.requests</span> <span class="kn">import</span> <span class="n">Tracker</span><span class="p">,</span> <span class="n">Page</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">Visitor</span>
 
      <span class="n">tracker</span> <span class="o">=</span> <span class="n">Tracker</span><span class="p">(</span><span class="s">'MO-XXXXX-X'</span><span class="p">,</span> <span class="s">'yourdomain.com'</span><span class="p">)</span>     
      <span class="n">visitor</span> <span class="o">=</span> <span class="n">Visitor</span><span class="p">()</span>
@@ -84,9 +79,7 @@ Also with a basic sample of server side implementation in quite a few languages 
      <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
      <span class="n">page</span> <span class="o">=</span> <span class="n">Page</span><span class="p">(</span><span class="s">'/path'</span><span class="p">)</span>
      <span class="n">tracker</span><span class="o">.</span><span class="n">track_pageview</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">visitor</span><span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h1>Thanks to:</h1>
 
