@@ -1,6 +1,9 @@
 *pyc
-dist/*
-build/*
-pyga.egg-info/*
-doc/_build/*
+dist
+build
+*.egg-info
+*.egg
+doc/_build
 *~
+.ropeproject
+.vimrc

@@ -93,7 +93,8 @@ class Campaign(object):
         if not self.source:
             raise exceptions.ValidationError('Campaigns need to have at least the "source" attribute defined.')
 
-    def create_from_referrer(self, url):
+    @staticmethod
+    def create_from_referrer(url):
         obj = Campaign(Campaign.TYPE_REFERRAL)
         parse_rslt = urlparse(url)
         obj.source = parse_rslt.netloc
@@ -116,7 +117,7 @@ class Campaign(object):
             try:
                 setattr(self, self.UTMZ_PARAM_MAP[key], unquote_plus(val))
             except KeyError:
-                pass
+                continue
 
         return self
 
@@ -422,7 +423,7 @@ class Visitor(object):
     def __getattribute__(self, name):
         if name == 'unique_id':
             tmp = object.__getattribute__(self, name)
-            if tmp == None:
+            if tmp is None:
                 self.unique_id = self.generate_unique_id()
         return object.__getattribute__(self, name)
 
