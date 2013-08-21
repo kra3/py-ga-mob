@@ -21,7 +21,6 @@ setup(name='pyga',
       requires=[],
       install_requires=['setuptools', ],
       packages=find_packages(),
-      namespace_packages=['pyga'],
       classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
