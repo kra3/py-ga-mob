@@ -64,9 +64,9 @@ Example
      page = Page('/path')
      tracker.track_pageview(page, session, visitor)
      
+     
+     
 
+`PHP version <https://github.com/thomasbachem/php-ga>`_
 
-Thanks to:
----------------------
-* `Expicient Inc <http://www.expicient.com>`_
-* `php-ga <https://github.com/thomasbachem/php-ga>`_
+Thanks to: `Expicient Inc <http://www.expicient.com>`_
