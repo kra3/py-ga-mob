@@ -70,4 +70,4 @@ Example
 Thanks to:
 ---------------------
 * `Expicient Inc <http://www.expicient.com>`_
-* `php-ga <http://code.google.com/p/php-ga>`_
+* `php-ga <https://github.com/thomasbachem/php-ga>`_
