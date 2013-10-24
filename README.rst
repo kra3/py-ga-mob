@@ -70,3 +70,6 @@ Example
 `PHP version <https://github.com/thomasbachem/php-ga>`_
 
 Thanks to: `Expicient Inc <http://www.expicient.com>`_
+
+
+And for you fans outthere, we even have `mountain bikes named pyga<http://www.pygaindustries.com/bikes.html>`_ ;)
