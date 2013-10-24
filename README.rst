@@ -72,4 +72,4 @@ Example
 Thanks to: `Expicient Inc <http://www.expicient.com>`_
 
 
-And for you fans outthere, we even have `mountain bikes named pyga<http://www.pygaindustries.com/bikes.html>`_ ;)
+And for you fans outthere, we even have `mountain bikes named pyga <http://www.pygaindustries.com/bikes.html>`_ ;)
