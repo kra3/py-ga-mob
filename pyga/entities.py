@@ -461,7 +461,7 @@ class Visitor(object):
             for key in ('HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'):
                 if key in meta and not ip:
                     ips = meta.get(key, '').split(',')
-                    ip = ips[len(ips) - 1].strip()
+                    ip = ips[-1].strip()
                     if not utils.is_valid_ip(ip):
                         ip = ''
                     if utils.is_private_ip(ip):
