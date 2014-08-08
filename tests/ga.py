@@ -6,6 +6,7 @@ class TestGA(unittest.TestCase):
     def test_request(self):
         from pyga.requests import Tracker, Visitor, Session, Page
         from mock import Mock
+        from urlparse import urlparse, parse_qs
         import urllib2
 
         mocked = urllib2.urlopen = Mock()
@@ -27,3 +28,10 @@ class TestGA(unittest.TestCase):
         (request, ), _ = mocked.call_args_list.pop()
         self.assertEqual(request.headers.get('X-forwarded-for'), '134.321.0.1')
         self.assertEqual(request.headers.get('User-agent'), 'Test User Agent 1.0')
+
+        # Assert that &ua and &uip are passed along, and that &uip is properly
+        # anonymized.
+        qs = urlparse(request.get_full_url()).query
+        params = parse_qs(qs)
+        self.assertEqual(params['uip'][0], '134.321.0.0')
+        self.assertEqual(params['ua'][0], 'Test User Agent 1.0')
