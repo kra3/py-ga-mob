@@ -154,6 +154,14 @@ class Request(GIFRequest):
         '''
         params.utmip = self.visitor.ip_address
         params.aip = self.tracker.config.anonimize_ip_address and 1 or None
+
+        # Add override User-Agent parameter (&ua) and override IP address
+        # parameter (&uip). Note that the override IP address parameter is
+        # always anonymized, as if &aip were present (see
+        # https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#uip)
+        params.ua = self.visitor.user_agent
+        params.uip = utils.anonymize_ip(self.visitor.ip_address)
+
         if params.aip:
             # If anonimization of ip enabled? then!
             params.utmip = utils.anonymize_ip(params.utmip)
