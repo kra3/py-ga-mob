@@ -181,7 +181,7 @@ class CustomVariable(object):
 class Event(object):
     '''
     Represents an Event
-    http://code.google.com/apis/analytics/docs/tracking/eventTrackerOverview.html
+    https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
 
     Properties:
     category -- The general event category
