@@ -5,8 +5,7 @@ import calendar
 from math import floor
 from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
 import pyga.utils as utils
-import urllib
-import urllib2
+import six
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
@@ -43,7 +42,7 @@ class GIFRequest(object):
 
     def build_http_request(self):
         params = self.build_parameters()
-        query_string = urllib.urlencode(params.get_parameters())
+        query_string = six.moves.urllib.parse.urlencode(params.get_parameters())
         query_string = query_string.replace('+', '%20')
 
         # Mimic Javascript's encodeURIComponent() encoding for the query
@@ -73,7 +72,7 @@ class GIFRequest(object):
         logger.debug(url)
         if post:
             logger.debug(post)
-        return urllib2.Request(url, post, headers)
+        return six.moves.urllib.request.Request(url, post, headers)
 
     def build_parameters(self):
         '''Marker implementation'''
@@ -85,7 +84,7 @@ class GIFRequest(object):
 
         #  Do not actually send the request if endpoint host is set to null
         if self.config.endpoint:
-            response = urllib2.urlopen(
+            response = six.moves.urllib.request.urlopen(
                 request, timeout=self.config.request_timeout)
 
         return response

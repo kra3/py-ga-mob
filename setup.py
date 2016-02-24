@@ -18,7 +18,9 @@ setup(name='pyga',
       description='Server side implemenation of Google Analytics in Python.',
       long_description=long_desc,
       keywords='google analytics  mobile serverside',
-      requires=[],
+      requires=[
+          'six',
+      ],
       install_requires=['setuptools', ],
       packages=find_packages(),
       classifiers=[
@@ -34,5 +36,5 @@ setup(name='pyga',
         'Topic :: Internet :: WWW/HTTP :: WSGI',
       ],
       test_suite='tests',
-      tests_require=['mock']
+      tests_require=['mock', 'six',]
     )

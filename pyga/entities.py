@@ -2,8 +2,7 @@
 
 from datetime import datetime
 from operator import itemgetter
-from urlparse import urlparse
-from urllib import unquote_plus
+import six
 from pyga import utils
 from pyga import exceptions
 
@@ -96,7 +95,7 @@ class Campaign(object):
     @staticmethod
     def create_from_referrer(url):
         obj = Campaign(Campaign.TYPE_REFERRAL)
-        parse_rslt = urlparse(url)
+        parse_rslt = six.moves.urllib.parse.urlparse(url)
         obj.source = parse_rslt.netloc
         obj.content = parse_rslt.path
         return obj
@@ -115,7 +114,7 @@ class Campaign(object):
             key, val = param.split('=')
 
             try:
-                setattr(self, self.UTMZ_PARAM_MAP[key], unquote_plus(val))
+                setattr(self, self.UTMZ_PARAM_MAP[key], six.moves.urllib.parse.unquote_plus(val))
             except KeyError:
                 continue
 
@@ -416,7 +415,7 @@ class Visitor(object):
 
     def __setattr__(self, name, value):
         if name == 'unique_id':
-            if value and value < 0 or value > 0x7fffffff:
+            if value and (value < 0 or value > 0x7fffffff):
                 raise ValueError('Visitor unique ID has to be a 32-bit integer between 0 and 0x7fffffff')
         object.__setattr__(self, name, value)
 

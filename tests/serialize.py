@@ -1,6 +1,5 @@
 import unittest
-from cPickle import loads, dumps
-
+import six
 
 class TestSerialize(unittest.TestCase):
     def test_unique_id_must_be_equals(self):
@@ -11,6 +10,6 @@ class TestSerialize(unittest.TestCase):
         from pyga.requests import Visitor
 
         visitor = Visitor()
-        serialized_visitor = dumps(visitor)
-        deserialized_visitor = loads(serialized_visitor)
+        serialized_visitor = six.moves.cPickle.dumps(visitor)
+        deserialized_visitor = six.moves.cPickle.loads(serialized_visitor)
         self.assertEqual(visitor.unique_id, deserialized_visitor.unique_id)

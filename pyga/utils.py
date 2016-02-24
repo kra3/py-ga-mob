@@ -3,7 +3,7 @@
 import logging
 from random import randint
 import re
-import urllib
+import six
 import os
 from datetime import datetime
 
@@ -60,7 +60,7 @@ def anonymize_ip(ip):
 
 def encode_uri_components(value):
     '''Mimics Javascript's encodeURIComponent() function for consistency with the GA Javascript client.'''
-    return convert_to_uri_component_encoding(urllib.quote(value))
+    return convert_to_uri_component_encoding(six.moves.urllib.parse.quote(value))
 
 def convert_to_uri_component_encoding(value):
     return value.replace('%21', '!').replace('%2A', '*').replace('%27', "'").replace('%28', '(').replace('%29', ')')
@@ -107,7 +107,7 @@ def stringify(s, stype=None, fn=None):
             # To do str(s). But, str() can fail on unicode. So, use .encode instead
             if not stype or (stype == type(s)):
                 try:
-                    return unicode(s)
+                    return six.text_type(s)
                     #return s.encode('ascii', 'replace')
                 except AttributeError:
                     return str(s)
