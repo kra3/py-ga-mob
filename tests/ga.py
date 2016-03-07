@@ -1,4 +1,5 @@
 import unittest
+import six
 
 
 class TestGA(unittest.TestCase):
@@ -6,10 +7,8 @@ class TestGA(unittest.TestCase):
     def test_request(self):
         from pyga.requests import Tracker, Visitor, Session, Page
         from mock import Mock
-        from urlparse import urlparse, parse_qs
-        import urllib2
 
-        mocked = urllib2.urlopen = Mock()
+        mocked = six.moves.urllib.request.urlopen = Mock()
 
         meta = dict(
             REMOTE_ADDR='134.321.0.1',
@@ -31,7 +30,7 @@ class TestGA(unittest.TestCase):
 
         # Assert that &ua and &uip are passed along, and that &uip is properly
         # anonymized.
-        qs = urlparse(request.get_full_url()).query
-        params = parse_qs(qs)
+        qs = six.moves.urllib.parse.urlparse(request.get_full_url()).query
+        params = six.moves.urllib.parse.parse_qs(qs)
         self.assertEqual(params['uip'][0], '134.321.0.0')
         self.assertEqual(params['ua'][0], 'Test User Agent 1.0')
