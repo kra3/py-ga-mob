@@ -20,7 +20,7 @@ Also with a basic sample of server side implementation in quite a few languages 
 PS: google moved away from ga.js to analytics.js; a new operating standard for Google Analytics named "universal analytics".
 Soon ga.js will be deprectaed. I'm planning to have a pyga equivalent to the new standard. Read more here at
 https://developers.google.com/analytics/devguides/collection/upgrade/#upgrade-guides
-
+https://developers.google.com/analytics/devguides/collection/protocol/v1/#getting-started
 
 * PyPi Package Page: http://pypi.python.org/pypi/pyga
 * Main Repository: https://github.com/kra3/py-ga-mob
