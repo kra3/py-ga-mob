@@ -9,13 +9,17 @@ PYGA: Python Google Analytics - Data Collection API
 .. image:: https://pypip.in/d/pyga/badge.png
    :target: https://crate.io/packages/pyga
 
-pyga is an iplementation of Google Analytics in Python;so that it can be used at server side.
+pyga is an iplementation of Google Analytics (ga.js) in Python;so that it can be used at server side.
 This project only helps you with Data Collection part of Google Analytics.
 ie., You can consider this as a replacement for ga.js at client side.
 
 Google Provides Android SDK,iOS SDK + Flash SDK. 
 And left everybody else with a single page documentation about GIF request parameters. 
 Also with a basic sample of server side implementation in quite a few languages (perl, php, jsp).
+
+PS: google moved away from ga.js to analytics.js; a new operating standard for Google Analytics named "universal analytics".
+Soon ga.js will be deprectaed. I'm planning to have a pyga equivalent to the new standard. Read more here at
+https://developers.google.com/analytics/devguides/collection/upgrade/#upgrade-guides
 
 
 * PyPi Package Page: http://pypi.python.org/pypi/pyga
