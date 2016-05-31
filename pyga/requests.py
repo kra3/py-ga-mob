@@ -988,7 +988,7 @@ class X10(object):
             except KeyError:
                 return char
 
-        return u''.join(map(_translate, value)).encode('utf-8')
+        return u''.join(map(_translate, value)).encode('utf-8', 'ignore')
 
     def __render_data_type(self, data):
         '''Given a data array for a certain type, render its string encoding.'''
