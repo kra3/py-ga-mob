@@ -9,7 +9,7 @@ import six
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
-__version__ = '2.5.0'
+__version__ = '2.5.1'
 
 logger = logging.getLogger(__name__)
 
