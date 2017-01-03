@@ -1,0 +1,8 @@
+title: Py-ga-mob
+description: "PYGA: Python Google Analytics - Data Collection API"
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-hacker
+
+gems:
+  - jekyll-mentions
