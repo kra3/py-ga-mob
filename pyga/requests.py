@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import calendar
+import logging
 from math import floor
-from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
-import pyga.utils as utils
-import six
+from urllib import urlencode
 
-__author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
-__license__ = "Simplified BSD"
-__version__ = '2.5.1'
+from pip._vendor import requests
+
+import pyga.utils as utils
+from pyga.entities import Campaign, CustomVariable
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +30,7 @@ class GIFRequest(object):
     user_agent -- User Agent String
 
     '''
+
     def __init__(self, config):
         self.type = None
         self.config = None
@@ -42,7 +42,7 @@ class GIFRequest(object):
 
     def build_http_request(self):
         params = self.build_parameters()
-        query_string = six.moves.urllib.parse.urlencode(params.get_parameters())
+        query_string = urlencode(params.get_parameters())
         query_string = query_string.replace('+', '%20')
 
         # Mimic Javascript's encodeURIComponent() encoding for the query
@@ -72,7 +72,12 @@ class GIFRequest(object):
         logger.debug(url)
         if post:
             logger.debug(post)
-        return six.moves.urllib.request.Request(url, post, headers)
+        return requests.request(
+            method='post',
+            url='url',
+            data=post,
+            headers=headers,
+            timeout=self.config.request_timeout)
 
     def build_parameters(self):
         '''Marker implementation'''
@@ -84,9 +89,7 @@ class GIFRequest(object):
 
         #  Do not actually send the request if endpoint host is set to null
         if self.config.endpoint:
-            response = six.moves.urllib.request.urlopen(
-                request, timeout=self.config.request_timeout)
-
+            response = request.fire()
         return response
 
     def fire(self):
@@ -132,7 +135,7 @@ class Request(GIFRequest):
         # Increment session track counter for each request
         self.session.track_count = self.session.track_count + 1
 
-        #http://code.google.com/intl/de-DE/apis/analytics/docs/tracking/eventTrackerGuide.html#implementationConsiderations
+        # http://code.google.com/intl/de-DE/apis/analytics/docs/tracking/eventTrackerGuide.html#implementationConsiderations
         if self.session.track_count > 500:
             logger.warning('Google Analytics does not guarantee to process more than 500 requests per session.')
 
@@ -493,7 +496,7 @@ class Config(object):
         self.queue_requests = False
         # self.fire_and_forget = False      # not supported as of now
         # self.logging_callback = False     # not supported as of now
-        self.request_timeout = 1
+        self.request_timeout = 1.0
         self.endpoint = 'http://www.google-analytics.com/__utm.gif'
         self.anonimize_ip_address = False
         self.site_speed_sample_rate = 1
@@ -501,7 +504,8 @@ class Config(object):
     def __setattr__(self, name, value):
         if name == 'site_speed_sample_rate':
             if value and (value < 0 or value > 100):
-                raise ValueError('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
+                raise ValueError(
+                    'For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
         object.__setattr__(self, name, value)
 
 
@@ -982,6 +986,7 @@ class X10(object):
 
     def __escape_extensible_value(self, value):
         '''Escape X10 string values to remove ambiguity for special characters.'''
+
         def _translate(char):
             try:
                 return self.__ESCAPE_CHAR_MAP[char]
