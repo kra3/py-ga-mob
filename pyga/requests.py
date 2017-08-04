@@ -16,6 +16,7 @@ __author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
 __version__ = "3.0.0"
 
+
 class Q(object):
     REQ_ARRAY = []
 
@@ -77,7 +78,7 @@ class GIFRequest(object):
             logger.debug(post)
         return requests.request(
             method='post',
-            url='url',
+            url=url,
             data=post,
             headers=headers,
             timeout=self.config.request_timeout)
@@ -87,13 +88,8 @@ class GIFRequest(object):
         return Parameters()
 
     def __send(self):
-        request = self.build_http_request()
-        response = None
-
-        #  Do not actually send the request if endpoint host is set to null
-        if self.config.endpoint:
-            response = request.fire()
-        return response
+        '''High time to send this request, who needs all those wrapers, anyway'''
+        return self.build_http_request()
 
     def fire(self):
         '''
