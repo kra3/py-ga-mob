@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
 
-import calendar
 import logging
+import calendar
 from math import floor
-from urllib.parse import urlencode
-
-from pip._vendor import requests
-
+from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
 import pyga.utils as utils
-from pyga.entities import Campaign, CustomVariable
+try:
+    from urllib import urlencode
+    from urllib2 import Request as urllib_request
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.parse import urlencode
+    from urllib.request import Request as urllib_request
+    from urllib.request import urlopen
+
+__author__ = "Germaniero"
+__license__ = "Simplified BSD"
+__version__ = '3.0.0'
 
 logger = logging.getLogger(__name__)
-
-__author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
-__license__ = "Simplified BSD"
-__version__ = "3.0.0"
 
 
 class Q(object):
@@ -34,7 +38,6 @@ class GIFRequest(object):
     user_agent -- User Agent String
 
     '''
-
     def __init__(self, config):
         self.type = None
         self.config = None
@@ -65,7 +68,7 @@ class GIFRequest(object):
 
         headers = {}
         headers['Host'] = self.config.endpoint.split('/')[2]
-        headers['User-Agent'] = self.user_agent
+        headers['User-Agent'] = self.user_agent or ''
         headers['X-Forwarded-For'] = self.x_forwarded_for and self.x_forwarded_for or ''
 
         if use_post:
@@ -76,20 +79,22 @@ class GIFRequest(object):
         logger.debug(url)
         if post:
             logger.debug(post)
-        return requests.request(
-            method='post',
-            url=url,
-            data=post,
-            headers=headers,
-            timeout=self.config.request_timeout)
+        return urllib_request(url, post, headers)
 
     def build_parameters(self):
         '''Marker implementation'''
         return Parameters()
 
     def __send(self):
-        '''High time to send this request, who needs all those wrapers, anyway'''
-        return self.build_http_request()
+        request = self.build_http_request()
+        response = None
+
+        #  Do not actually send the request if endpoint host is set to null
+        if self.config.endpoint:
+            response = urlopen(
+                request, timeout=self.config.request_timeout)
+
+        return response
 
     def fire(self):
         '''
@@ -134,7 +139,7 @@ class Request(GIFRequest):
         # Increment session track counter for each request
         self.session.track_count = self.session.track_count + 1
 
-        # http://code.google.com/intl/de-DE/apis/analytics/docs/tracking/eventTrackerGuide.html#implementationConsiderations
+        #http://code.google.com/intl/de-DE/apis/analytics/docs/tracking/eventTrackerGuide.html#implementationConsiderations
         if self.session.track_count > 500:
             logger.warning('Google Analytics does not guarantee to process more than 500 requests per session.')
 
@@ -205,7 +210,7 @@ class Request(GIFRequest):
             x10.clear_key(self.X10_CUSTOMVAR_VALUE_PROJCT_ID)
             x10.clear_key(self.X10_CUSTOMVAR_SCOPE_PROJECT_ID)
 
-            for cvar in list(custom_vars.values()):
+            for cvar in custom_vars.itervalues():
                 name = utils.encode_uri_components(cvar.name)
                 value = utils.encode_uri_components(cvar.value)
                 x10.set_key(
@@ -495,7 +500,7 @@ class Config(object):
         self.queue_requests = False
         # self.fire_and_forget = False      # not supported as of now
         # self.logging_callback = False     # not supported as of now
-        self.request_timeout = 1.0
+        self.request_timeout = 1
         self.endpoint = 'http://www.google-analytics.com/__utm.gif'
         self.anonimize_ip_address = False
         self.site_speed_sample_rate = 1
@@ -503,8 +508,7 @@ class Config(object):
     def __setattr__(self, name, value):
         if name == 'site_speed_sample_rate':
             if value and (value < 0 or value > 100):
-                raise ValueError(
-                    'For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
+                raise ValueError('For consistency with ga.js, sample rates must be specified as a number between 0 and 100.')
         object.__setattr__(self, name, value)
 
 
@@ -985,14 +989,13 @@ class X10(object):
 
     def __escape_extensible_value(self, value):
         '''Escape X10 string values to remove ambiguity for special characters.'''
-
         def _translate(char):
             try:
                 return self.__ESCAPE_CHAR_MAP[char]
             except KeyError:
                 return char
 
-        return u''.join(map(_translate, value)).encode('utf-8', 'ignore')
+        return ''.join(map(_translate, str(value)))
 
     def __render_data_type(self, data):
         '''Given a data array for a certain type, render its string encoding.'''

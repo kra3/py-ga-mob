@@ -3,14 +3,9 @@ PYGA: Python Google Analytics
 ===================================================
 This is a fork of https://github.com/kra3/py-ga-mob
 
-pyga is an iplementation of Google Analytics (ga.js) in Python;so that it can be used at server side.
-This project only helps you with Data Collection part of Google Analytics.
-ie., You can consider this as a replacement for ga.js at client side.
-
-Google Provides Android SDK,iOS SDK + Flash SDK. 
-And left everybody else with a single page documentation about GIF request parameters. 
-Also with a basic sample of server side implementation in quite a few languages (perl, php, jsp).
-
+Pyga is an implementation of Google Analytics (ga.js) in Python that can be used
+at server side. This project only helps you with Data Collection part of Google
+Analytics. You can consider this as a replacement for ga.js at client side.
 
 Use Cases
 --------------
@@ -33,12 +28,6 @@ Supported Features
 
 * Ad-Words
 * Search Engine
-
-
-
-To know more about mobiletracking see:
-https://developers.google.com/analytics/devguides/collection/other/mobileWebsites
-
 
 Example
 -------------------      

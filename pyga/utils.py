@@ -7,7 +7,7 @@ import six
 import os
 from datetime import datetime
 
-__author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
+__author__ = "Germaniero"
 __license__ = "Simplified BSD"
 
 RE_IP = re.compile(r'^[\d+]{1,3}\.[\d+]{1,3}\.[\d+]{1,3}\.[\d+]{1,3}$', re.I)
