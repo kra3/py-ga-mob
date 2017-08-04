@@ -1,30 +1,3 @@
-# Version 2.5.1
-- added User-Agent parameter (&ua) and override IP address parameter (&uip).
-- bug fix on __escape_extensible_value: handles unicode objects now.
-- added py3 support using six.
-Thanks for @infowolfe, @jvkersch, @zonito, @GaleDragon, @benoitguigal for pull requests.
-
-# Version 2.5.0
-- removed name space, pyga is no more a namespaced package
-Check issue #10 and patch by @nickjoyce-wf (Nick Joyce)
-
-# Version 2.4.1 
-- fixed broken installation
-Thanks for @klen (Kirill Klenov).
-
-# Version 2.4
-- flexible time-stamp handling,
-- fix for utmz parsing
-- one more test case
-Thanks for @nsitarz (Nick Sitarz).
-
-# Version 2.3
-- Patch from github.com/jaysonsantos to workaround a problem when serializing `Visitor` objects. 
-- See issue 3 for more info
-
-# Version 2.2
-- Patch from github.com/paperlabs TO USE UTc timestamps.
-- NB: library now throws exceptions, so you now have to catch them.
-
-# Version 2.1
-- Fixed a typo which caused language to not populate on reports.
+# Version 3.0.0
+- forked from kra3/py-ga-mob
+- added Python 3 compatibility and removed Python 2 compatibility
