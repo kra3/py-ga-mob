@@ -6,7 +6,7 @@ import six
 from pyga import utils
 from pyga import exceptions
 
-__author__ = "Germaniero"
+__author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
 __license__ = "Simplified BSD"
 
 
