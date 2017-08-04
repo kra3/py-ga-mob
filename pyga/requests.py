@@ -203,7 +203,7 @@ class Request(GIFRequest):
             x10.clear_key(self.X10_CUSTOMVAR_VALUE_PROJCT_ID)
             x10.clear_key(self.X10_CUSTOMVAR_SCOPE_PROJECT_ID)
 
-            for cvar in custom_vars.itervalues():
+            for cvar in list(custom_vars.values()):
                 name = utils.encode_uri_components(cvar.name)
                 value = utils.encode_uri_components(cvar.value)
                 x10.set_key(
@@ -240,7 +240,7 @@ class Request(GIFRequest):
                 'utmcct': campaign.content,
             }
 
-            for k, v in param_map.iteritems():
+            for k, v in param_map.items():
                 if v:
                     # Only spaces and pluses get escaped in gaforflash and ga.js, so we do the same
                     params._utmz = '%s%s=%s%s' % (params._utmz, k,
@@ -1032,7 +1032,7 @@ class X10(object):
 
     def render_url_string(self):
         result = ''
-        for project_id, project in self.project_data.iteritems():
+        for project_id, project in self.project_data.items():
             result = '%s%s%s' % (
                 result, project_id, self.__render_project(project))
 
