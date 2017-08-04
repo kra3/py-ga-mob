@@ -12,6 +12,9 @@ from pyga.entities import Campaign, CustomVariable
 
 logger = logging.getLogger(__name__)
 
+__author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
+__license__ = "Simplified BSD"
+__version__ = "3.0.0"
 
 class Q(object):
     REQ_ARRAY = []
