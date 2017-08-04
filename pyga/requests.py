@@ -3,7 +3,7 @@
 import calendar
 import logging
 from math import floor
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from pip._vendor import requests
 
