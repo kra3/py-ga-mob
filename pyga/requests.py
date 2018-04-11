@@ -7,10 +7,6 @@ from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, 
 import pyga.utils as utils
 import six
 
-__author__ = "Arun KR (kra3) <the1.arun@gmail.com>"
-__license__ = "Simplified BSD"
-__version__ = '2.5.1'
-
 logger = logging.getLogger(__name__)
 
 
