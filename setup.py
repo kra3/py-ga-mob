@@ -21,7 +21,7 @@ setup(name='pyga',
       requires=[
           'six',
       ],
-      install_requires=['setuptools', ],
+      install_requires=['setuptools', 'six'],
       packages=find_packages(),
       classifiers=[
         'Intended Audience :: Developers',
