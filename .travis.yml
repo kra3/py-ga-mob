@@ -10,4 +10,11 @@ python:
 install:
   - python setup.py install
 
-script: python setup.py test
+before_install:
+  - pip install coveralls
+
+script:
+  - make test
+
+after_success:
+  - coveralls
