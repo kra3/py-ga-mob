@@ -1,11 +1,11 @@
-===================================================
+https://crate.io/packages/pyga===================================================
 PYGA: Python Google Analytics - Data Collection API
 ===================================================
 .. image:: https://secure.travis-ci.org/kra3/py-ga-mob.png?branch=master
    :alt: Build Status
    :target: http://travis-ci.org/kra3/py-ga-mob
 .. image:: https://img.shields.io/pypi/v/pyga.svg
-   :target: https://crate.io/packages/pyga
+   :target: http://pypi.python.org/pypi/pyga
 .. image:: https://coveralls.io/repos/github/kra3/py-ga-mob/badge.svg?branch=master
    :target: https://coveralls.io/github/kra3/py-ga-mob?branch=master
 
