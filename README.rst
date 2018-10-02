@@ -1,4 +1,4 @@
-https://crate.io/packages/pyga===================================================
+===================================================
 PYGA: Python Google Analytics - Data Collection API
 ===================================================
 .. image:: https://secure.travis-ci.org/kra3/py-ga-mob.png?branch=master
