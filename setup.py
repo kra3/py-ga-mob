@@ -36,5 +36,5 @@ setup(name='pyga',
         'Topic :: Internet :: WWW/HTTP :: WSGI',
       ],
       test_suite='tests',
-      tests_require=['mock', 'six',]
+      tests_require=['mock',]
     )

@@ -13,10 +13,10 @@ except ImportError as e:
     from urllib.parse import urlencode
     from urllib.request import Request as urllib_request
     from urllib.request import urlopen
-    
-__author__ = "Germaniero"
+
+__author__ = "Arun KR (kra3) <the1.arun@gmail.com"
 __license__ = "Simplified BSD"
-__version__ = '3.0.0'
+__version__ = '2.6.0'
 
 logger = logging.getLogger(__name__)
 
