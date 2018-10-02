@@ -4,9 +4,9 @@ PYGA: Python Google Analytics - Data Collection API
 .. image:: https://secure.travis-ci.org/kra3/py-ga-mob.png?branch=master
    :alt: Build Status
    :target: http://travis-ci.org/kra3/py-ga-mob
-.. image:: https://pypip.in/v/pyga/badge.png
+.. image:: https://img.shields.io/pypi/v/pyga.svg
    :target: https://crate.io/packages/pyga
-.. image:: https://pypip.in/d/pyga/badge.png
+.. image:: https://img.shields.io/pypi/dm/pyga.svg
    :target: https://crate.io/packages/pyga
 
 pyga is an iplementation of Google Analytics (ga.js) in Python;so that it can be used at server side.
