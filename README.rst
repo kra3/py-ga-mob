@@ -10,7 +10,7 @@ PYGA: Python Google Analytics - Data Collection API
    :target: https://coveralls.io/github/kra3/py-ga-mob?branch=master
 
 
-pyga is an implementation of Google Analytics (ga.js) in Python;so that it can be used at server side.
+pyga is an implementation of Google Analytics (ga.js) in Python; so that it can be used at server side.
 This project only helps you with Data Collection part of Google Analytics.
 ie., You can consider this as a replacement for ga.js at client side.
 

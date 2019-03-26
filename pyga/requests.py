@@ -16,7 +16,7 @@ except ImportError as e:
 
 __author__ = "Arun KR (kra3) <the1.arun@gmail.com"
 __license__ = "Simplified BSD"
-__version__ = '2.6.0'
+__version__ = '2.6.1'
 
 logger = logging.getLogger(__name__)
 
