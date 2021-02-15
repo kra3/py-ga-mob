@@ -5,7 +5,7 @@ import calendar
 from math import floor
 from pyga.entities import Campaign, CustomVariable, Event, Item, Page, Session, SocialInteraction, Transaction, Visitor
 import pyga.utils as utils
-from future.utils import itervalues
+from six import itervalues
 try:
     from urllib import urlencode
     from urllib2 import Request as urllib_request
