@@ -8,8 +8,11 @@ PYGA: Python Google Analytics - Data Collection API
    :target: http://pypi.python.org/pypi/pyga
 .. image:: https://coveralls.io/repos/github/kra3/py-ga-mob/badge.svg?branch=master
    :target: https://coveralls.io/github/kra3/py-ga-mob?branch=master
+   
 .. image:: https://github.com/kra3/py-ga-mob/actions/workflows/codeql-analysis.yml/badge.svg
    :target: https://github.com/kra3/py-ga-mob/actions/workflows/codeql-analysis.yml
+.. image:: https://github.com/kra3/py-ga-mob/actions/workflows/python-publish.yml/badge.svg
+   :target: https://github.com/kra3/py-ga-mob/actions/workflows/python-publish.yml
 
 pyga is an implementation of Google Analytics (ga.js) in Python; so that it can be used at server side.
 This project only helps you with Data Collection part of Google Analytics.
