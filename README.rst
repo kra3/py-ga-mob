@@ -1,9 +1,9 @@
 ===================================================
 PYGA: Python Google Analytics - Data Collection API
 ===================================================
-.. image:: https://secure.travis-ci.org/kra3/py-ga-mob.png?branch=master
+.. image:: https://github.com/kra3/py-ga-mob/actions/workflows/python-package.yml/badge.svg
    :alt: Build Status
-   :target: http://travis-ci.org/kra3/py-ga-mob
+   :target: https://github.com/kra3/py-ga-mob/actions/workflows/python-package.yml
 .. image:: https://img.shields.io/pypi/v/pyga.svg
    :target: http://pypi.python.org/pypi/pyga
 .. image:: https://coveralls.io/repos/github/kra3/py-ga-mob/badge.svg?branch=master
