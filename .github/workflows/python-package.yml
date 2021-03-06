@@ -38,11 +38,11 @@ jobs:
         python setup.py install
     #- name: Audit 
     #  run: |
-    #    make audit
+    #    pylama pyga -i E501
     - name: Test ${{ matrix.test_number }}
       run: |
         make test
-        coverage run --source=pyga make test
+        coverage run --source=pyga setup.py test
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@master
       with:
