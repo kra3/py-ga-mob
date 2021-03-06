@@ -39,9 +39,9 @@ jobs:
         python -m pip install pylama coveralls
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         python setup.py install
-    - name: Audit 
-      run: |
-        make audit
+    #- name: Audit 
+    #  run: |
+    #    make audit
     - name: Run tests 
       run: |
         make test
