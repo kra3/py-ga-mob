@@ -41,22 +41,22 @@ jobs:
     #    pylama pyga -i E501
     - name: Test ${{ matrix.test_number }}
       run: |
-        make test
-        coverage run --source=pyga setup.py test
-    - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
-        flag-name: run-${{ matrix.test_number }}
-        parallel: true
+        python setup.py test
+        # coverage run --source=pyga setup.py test
+    #- name: Coveralls Parallel
+    #  uses: coverallsapp/github-action@master
+    #  with:
+    #    github-token: ${{ secrets.github_token }}
+    #    flag-name: run-${{ matrix.test_number }}
+    #    parallel: true
     
-  finish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
-        parallel-finished: true
+  #finish:
+  #  needs: build
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #  - name: Coveralls Finished
+  #    uses: coverallsapp/github-action@master
+  #    with:
+  #      github-token: ${{ secrets.github_token }}
+  #      parallel-finished: true
     
