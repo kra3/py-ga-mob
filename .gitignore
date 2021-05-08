@@ -1,10 +1,12 @@
 *pyc
-dist
-build
 *.egg-info
 *.egg
-doc/_build
 *~
 .ropeproject
 .vimrc
+.coverage
 .eggs/
+doc/_build
+dist
+build
+.pytest_cache
